@@ -1,0 +1,48 @@
+    /*
+    // Tell motor to rotate 360 degrees. That's it.
+    //+ve towards
+    //-ve away
+    for(int i = 0 ; i < 380 ; ++i)
+    {
+      verticalMotor.rotate(-360);
+    }
+    for(int i = 0 ; i < 380 ; ++i)
+    {
+      horizontalMotor.rotate(-360);
+    }
+    for(int i = 0 ; i < 380 ; ++i)
+    {
+      verticalMotor.rotate(360);
+    }
+    for(int i = 0 ; i < 380 ; ++i)
+    {
+      horizontalMotor.rotate(360);
+    }
+    for (unsigned int i = 0; i < 80; i++)
+      horizontalMotor.rotate(-360);
+    while(1);
+     */
+    //The infinite loop
+    /*
+    verticalMotor.moveMillimeters(1,AGAINST_MOTOR);
+    horizontalMotor.moveMillimeters(380,TOWARDS_MOTOR);
+    verticalMotor.moveMillimeters(1,AGAINST_MOTOR);
+    horizontalMotor.calibrate(15,AGAINST_MOTOR);
+    */
+
+      // Testing
+      /*magnetServo.write(180);
+      horizontalMotor.moveMillimeters(80,TOWARDS_MOTOR);
+      verticalMotor.moveMillimeters(40,!TOWARDS_MOTOR);
+      magnetServo.write(90);
+      horizontalMotor.moveMillimeters(20,TOWARDS_MOTOR);
+      verticalMotor.moveMillimeters(80,AGAINST_MOTOR);
+      horizontalMotor.moveMillimeters(30,TOWARDS_MOTOR);
+      magnetServo.write(180);
+      horizontalMotor.moveMillimeters(10,!TOWARDS_MOTOR);
+      verticalMotor.moveMillimeters(80,TOWARDS_MOTOR);
+      magnetServo.write(90);
+      horizontalMotor.moveMillimeters(20,TOWARDS_MOTOR);
+      verticalMotor.moveMillimeters(80,AGAINST_MOTOR);
+      horizontalMotor.moveMillimeters(70,TOWARDS_MOTOR);
+      */
