@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ChessEngine;
-using ChessMaster.I2C;
-using ChessMaster.Serial;
 
 /// <summary>
 /// Class responsible for parsing the last state change in ChessEngine to 
@@ -27,7 +24,6 @@ namespace ChessEngine.Controller
         /// </summary>
         public Controller()
         {
-            I2CManager.Initiate(0x40, Windows.Devices.I2c.I2cBusSpeed.FastMode);
             // Assign places for dead pieces
             // Pawns
             _deadPawns = new Tuple<bool, byte[]>[2];

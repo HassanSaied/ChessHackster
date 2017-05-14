@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.I2c;
 
-namespace ChessMaster.I2C
+namespace ChessEngine.Communication.I2C
 {
     public static class I2CManager
     {

@@ -1,2 +1,2 @@
-C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\ChessEngine.csproj;arm
-C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\ChessMaster.csproj;arm
+D:\CMP\ChessHackster\ChessEngine\ChessEngine.csproj;arm
+D:\CMP\ChessHackster\ChessMaster\ChessMaster.csproj;arm

@@ -96,11 +96,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controller\Controller.cs" />
-    <Compile Include="Controller\ControllerMoveTypes.cs" />
-    <Compile Include="Controller\ControllerPieceType.cs" />
-    <Compile Include="Communication\I2CManager.cs" />
-    <Compile Include="Communication\SerialManager.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

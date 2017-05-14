@@ -1,6 +1,6 @@
 ﻿using ChessEngine.Controller;
 using ChessEngine.Engine;
-using ChessMaster.Serial;
+using ChessEngine.Communication.Serial;
 using Speech;
 using System;
 using System.Collections.Generic;

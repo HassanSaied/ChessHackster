@@ -108,6 +108,11 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Communication\I2CManager.cs" />
+    <Compile Include="Communication\SerialManager.cs" />
+    <Compile Include="Controller\Controller.cs" />
+    <Compile Include="Controller\ControllerMoveTypes.cs" />
+    <Compile Include="Controller\ControllerPieceType.cs" />
     <Compile Include="Engine\Board.cs" />
     <Compile Include="Engine\Book.cs" />
     <Compile Include="Engine\ChessPieceColor.cs" />

@@ -21958,14 +21958,14 @@
     "UAP,Version=v10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\hsaie\\.nuget\\packages\\": {}
+    "C:\\Users\\Bombo\\.nuget\\packages\\": {}
   },
   "project": {
     "restore": {
-      "projectUniqueName": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj",
+      "projectUniqueName": "D:\\CMP\\ChessHackster\\ChessEngine\\ChessEngine.csproj",
       "projectName": "ChessEngine",
-      "projectPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj",
-      "projectJsonPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\project.json",
+      "projectPath": "D:\\CMP\\ChessHackster\\ChessEngine\\ChessEngine.csproj",
+      "projectJsonPath": "D:\\CMP\\ChessHackster\\ChessEngine\\project.json",
       "projectStyle": "ProjectJson"
     },
     "dependencies": {

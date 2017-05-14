@@ -7,7 +7,7 @@ using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
 using Windows.Storage.Streams;
 
-namespace ChessMaster.Serial
+namespace ChessEngine.Communication.Serial
 {
     public class ArduinoDevice
     {
