@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessEngine.Communication.Serial;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,11 +20,19 @@ namespace ChessEngine.Controller
         private Dictionary<ControllerPieceType, Tuple<bool[], byte[][]>> _deadPieces;
         private Tuple<bool, byte[]>[] _deadPawns;
         private const byte _numberOfCells = 8;
+        private const byte _serialProtocolSendInitiate = (byte)'i';
+        private const byte _serialProtocolSendCancel = (byte)'c';
+        private const byte _serialProtocolRespondLoad = (byte)'l';
+        private const byte _serialProtocolRespondSave = (byte)'s';
+        private const byte _serialProtocolRespondBegin = (byte)'b';
+        private const byte _serialProtocolRespondFinish = (byte)'f';
+        private byte[] _stateToBeSaved; 
+
         /// <summary>
         /// Basic constructor 
         /// </summary>
         public Controller()
-        {
+        {            
             // Assign places for dead pieces
             // Pawns
             _deadPawns = new Tuple<bool, byte[]>[2];
@@ -150,7 +159,7 @@ namespace ChessEngine.Controller
             _currMove = lastMove;
             determineMovementType();
             generateCommands();
-            sendCommands();
+            serialCommunicate();
         }
 
         /// <summary>
@@ -222,14 +231,53 @@ namespace ChessEngine.Controller
         }
 
         /// <summary>
-        /// Sends generated commands to motor controller 
-        /// via I2C
+        /// Communicate between Chess engine and motor controller thorugh serial communication
         /// </summary>
-        private void sendCommands()
+        private void serialCommunicate()
         {
+            // Send initiate signal and wait for response
+            SerialManager.writer.WriteByte(_serialProtocolSendInitiate);
+            while (SerialManager.reader.UnconsumedBufferLength == 0)
+            {
+                // TODO: Check if move cancelled
+            }
+
+            // Get response and check it
+            byte response = SerialManager.reader.ReadByte();
+            if( response == _serialProtocolRespondLoad )
+            {
+                // TODO: Load saved state and wait for begin signal while checking for cancel 
+            }
+
+            // Indicator of movement 
+            bool moving = false;
+
+            // After begin signal is recieved send command one bye one while checking for cancel 
             for (int i = 0; i < _currCommands.Count; ++i)
             {
-                // TODO: call Serial Communication 
+                SerialManager.writer.WriteBytes(_currCommands[i]);
+                moving = true;
+                while (moving)
+                {
+                    while (SerialManager.reader.UnconsumedBufferLength == 0)
+                    {
+                        // TODO: Check if move cancelled
+                    }
+                    response = SerialManager.reader.ReadByte();
+                    if (response == _serialProtocolRespondSave)
+                    {
+                        // Safety check for waiting full input
+                        while (SerialManager.reader.UnconsumedBufferLength < 8) ;
+                        // Read state
+                        SerialManager.reader.ReadBytes(_stateToBeSaved);
+                        // TODO: Save state
+                    }
+                    else // Finish signal
+                    {
+                        // TODO: Save final state then send initiate again
+                        moving = false;
+                    }
+                }
             }
         }
 

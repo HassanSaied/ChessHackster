@@ -2,9 +2,12 @@
 #include <Servo.h>
 #include "Motor.h"
 
-#define SIG_BEGIN  'b'
-#define SIG_FINISH 'f'
-#define SIG_SAVE   's'
+#define SIG_BEGIN      'b'
+#define SIG_FINISH     'f'
+#define SIG_SAVE       's'
+#define SIG_LOAD       'l'
+#define SIG_INITIATE   'i'
+#define SIG_CANCEL     'c'
 
 #define BLOCK_SIZE 40
 
@@ -18,10 +21,6 @@ int currentColumn;
 
 // To source: Horizontal, Vertical; To Destination: Horizontal, Vertical, Horizontal, Vertical
 int moves[6];
-
-// Testing 
-byte testCases [3][4];
-int testCasesIndex;
 
 // CNC motors
 Motor verticalMotor(200, 3, 2, 4, 5, 6, 14, TOWARDS_MOTOR);
@@ -77,37 +76,11 @@ void setup() {
     horizontalMotor.calibrate();
     verticalMotor.calibrate();
 
-    // TODO: Send signal begin and wait for response(moves and last position then go to it)
+    // TODO: Send load signal and wait for response(moves and last position then go to it)
 
     // Check for saved state
     inProgress = (moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0);
 
-    /*
-     * //////////////////////////
-     *        Testing           *
-     * //////////////////////////       
-     */
-     
-     currentRow = 0;
-     currentColumn = 0;
-     testCasesIndex = 0;
-     
-     testCases[0][0] = 1;
-     testCases[0][1] = 1;
-     testCases[0][2] = 3;
-     testCases[0][3] = 1;
-
-     testCases[1][0] = 5;
-     testCases[1][1] = 5;
-     testCases[1][2] = 7;
-     testCases[1][3] = 4;
-
-     testCases[2][0] = 8;
-     testCases[2][1] = 4;
-     testCases[2][2] = 9;
-     testCases[2][3] = 8;
-
-     parseInput(testCases[testCasesIndex][0], testCases[testCasesIndex][1], testCases[testCasesIndex][2], testCases[testCasesIndex][3]);
 }
 
 void loop() {
@@ -221,12 +194,8 @@ void loop() {
     if(moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
     {
       inProgress = false;
-      // TODO: Send EOM
+      // TODO: Save final state then begin signal 
 
-      // Testing 
-      inProgress = true;
-      ++testCasesIndex;
-      parseInput(testCases[testCasesIndex][0], testCases[testCasesIndex][1], testCases[testCasesIndex][2], testCases[testCasesIndex][3]);
     }
     else
     {
@@ -234,7 +203,7 @@ void loop() {
     }
   }
 
-  // TODO: I2C
+  // TODO: Check for cancel signal
 }
 
 
