@@ -229,7 +229,7 @@ namespace ChessEngine.Controller
         {
             for (int i = 0; i < _currCommands.Count; ++i)
             {
-                // TODO: call I2C funciton 
+                // TODO: call Serial Communication 
             }
         }
 

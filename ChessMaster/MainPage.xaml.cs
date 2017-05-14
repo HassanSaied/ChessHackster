@@ -1,7 +1,7 @@
 ﻿using ChessEngine.Controller;
 using ChessEngine.Engine;
 using ChessEngine.Communication.Serial;
-using Speech;
+using ChessEngine.Speech;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -1,7 +1,4 @@
-﻿using ChessEngine.Controller;
-using ChessEngine.Engine;
-using ChessMaster;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,16 +9,16 @@ using Windows.Media.SpeechRecognition;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 
-namespace Speech
+namespace ChessEngine.Speech
 {
     public class SpeechRecognition
     {
         string SRGS_FILE = "grammar.xml";
         static SpeechRecognizer recognizer;
-        Engine engine;
-        Controller controller;
+        ChessEngine.Engine.Engine engine;
+        ChessEngine.Controller.Controller controller;
 
-        public SpeechRecognition(Engine engine, Controller controller)
+        public SpeechRecognition(ChessEngine.Engine.Engine engine, ChessEngine.Controller.Controller controller)
         {
             this.engine = engine;
             this.controller = controller;
