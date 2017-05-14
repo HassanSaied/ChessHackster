@@ -1,0 +1,247 @@
+#include <Servo.h>
+#include "Motor.h"
+#include "Utils.h"
+
+// Response handler from master
+int response;
+
+// Indicator of movement
+bool inProgress;
+// Indicator for current position
+int currentRow;
+int currentColumn;
+
+// To source: Horizontal, Vertical; To Destination: Horizontal, Vertical, Horizontal, Vertical
+int moves[6];
+
+// Last saved state indicators
+int lastStateSourceRow, lastStateSourceColumn, lastStateDestinationRow, lastStateSDestinationColumn;
+
+// CNC motors
+Motor verticalMotor(200, 3, 2, 4, 5, 6, 14, TOWARDS_MOTOR);
+Motor horizontalMotor(200, 9, 8, 10, 11, 12, 15, AGAINST_MOTOR);
+Servo magnetServo;
+
+void oneLoopMove()
+{
+  if ( ( moves[0] == 0 && moves[1] == 0 ) && ( moves[2] != 0 || moves [3] != 0 || moves[4] != 0 || moves[5] != 0 ) )
+  {
+    magnetServo.write(90);         
+  }
+  else
+  {
+    magnetServo.write(180);
+  }
+
+  if (moves[0] != 0)
+  {
+    if (moves[0] > 0)
+    {
+      horizontalMotor.moveOneMillimeter(TOWARDS_MOTOR);
+      --moves[0];
+      ++currentColumn;
+    }
+    else
+    {
+      horizontalMotor.moveOneMillimeter(AGAINST_MOTOR);
+      ++moves[0];
+      --currentColumn;
+    }
+  }
+
+  else if (moves[1] != 0)
+  {
+    if (moves[1] > 0)
+    {
+      verticalMotor.moveOneMillimeter(AGAINST_MOTOR);
+      --moves[1];
+      ++currentRow;
+    }
+    else
+    {
+      verticalMotor.moveOneMillimeter(TOWARDS_MOTOR);
+      ++moves[1];
+      --currentRow;
+    }
+  }
+  
+  else if (moves[2] != 0)
+  {
+    if (moves[2] > 0)
+    {
+      horizontalMotor.moveOneMillimeter(TOWARDS_MOTOR);
+      --moves[2];
+      ++currentColumn;
+    }
+    else
+    {
+      horizontalMotor.moveOneMillimeter(AGAINST_MOTOR);
+      ++moves[2];
+      --currentColumn;
+    }
+  }
+  
+  else if (moves[3] != 0)
+  {
+    if (moves[3] > 0)
+    {
+      verticalMotor.moveOneMillimeter(AGAINST_MOTOR);
+      --moves[3];
+      ++currentRow;
+    }
+    else
+    {
+      verticalMotor.moveOneMillimeter(TOWARDS_MOTOR);
+      ++moves[3];
+      --currentRow;
+    }
+  }
+
+  else if (moves[4] != 0)
+  {
+    if (moves[4] > 0)
+    {
+      horizontalMotor.moveOneMillimeter(TOWARDS_MOTOR);
+      --moves[4];
+      ++currentColumn;
+    }
+    else
+    {
+      horizontalMotor.moveOneMillimeter(AGAINST_MOTOR);
+      ++moves[4];
+      --currentColumn;
+    }
+  }
+
+  else if (moves[5] != 0)
+  {
+    if (moves[5] > 0)
+    {
+     verticalMotor.moveOneMillimeter(AGAINST_MOTOR);
+      --moves[5];
+      ++currentRow;
+    }
+    else
+    {
+      verticalMotor.moveOneMillimeter(TOWARDS_MOTOR);
+      ++moves[5];
+      --currentRow;
+    }
+  }
+
+}
+
+void readInput()
+{
+  byte sourceRow, sourceColumn, destinationRow, destinationColumn; 
+
+  // TODO: implement
+
+  parseInput(sourceRow, sourceColumn, destinationRow, destinationColumn, currentRow, currentColumn, moves, inProgress);
+}
+
+void setup() {
+    // Setting up the motors' configuration
+    verticalMotor.setRPM(265);
+    verticalMotor.setMicrostep(16);
+    horizontalMotor.setRPM(265);
+    horizontalMotor.setMicrostep(16);
+    magnetServo.attach(16);
+    magnetServo.write(180);
+
+    // Setitng initial position to clear any error
+    horizontalMotor.calibrate();
+    verticalMotor.calibrate();
+    currentRow = 0;
+    currentColumn = 0;
+
+    // Set serial
+    Serial.begin(9600);
+    
+    // Initiate
+    Serial.write(SIG_VALIDATE);
+    response = 0;
+    while ( response != SIG_CONFIRM && response != SIG_CANCEL )
+    {
+      Serial.flush(); // Wait to be sure signal is sent
+      Serial.write(SIG_VALIDATE);
+ 
+      if ( Serial.available() )
+      {
+        response = Serial.read();
+      }
+    }
+
+    // Response is either confirm then load, or cancel 
+    if( response == SIG_CONFIRM)
+    {
+      // Load last state 
+      loadState(lastStateSourceRow, lastStateSourceColumn, lastStateDestinationRow, lastStateSDestinationColumn, moves);
+
+      // Get instructions
+      parseInput( lastStateSourceRow / BLOCK_SIZE, lastStateSourceColumn / BLOCK_SIZE,
+                  lastStateDestinationRow / BLOCK_SIZE, lastStateSDestinationColumn / BLOCK_SIZE,
+                  currentRow, currentColumn, moves, inProgress);          
+    }      
+
+}
+
+void loop() {
+
+  oneLoopMove();  
+  
+ 
+  if(inProgress)
+  {
+    
+    Serial.write(SIG_SAVE);
+    // Save current state
+    response = 0;
+    while ( response != SIG_CONFIRM && response != SIG_CANCEL )
+    {
+      Serial.flush(); // Wait to be sure signal is sent
+      Serial.write(SIG_SAVE);
+ 
+      if ( Serial.available() )
+      {
+        response = Serial.read();
+      }
+    }
+
+    if( response == SIG_CANCEL)
+    {
+        memset( moves, 0, sizeof(moves));
+        inProgress = false;
+    }      
+
+    saveState(currentRow, currentColumn, moves);
+
+  }
+    if(moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
+    {
+      inProgress = false;
+      Serial.write(SIG_EOM);
+      // Save current state
+      response = 0;
+      while ( response != SIG_CONFIRM )
+      {
+        Serial.flush(); // Wait to be sure signal is sent
+        Serial.write(SIG_EOM);
+      }
+
+  }
+
+  else
+  {
+     if (Serial.available())
+    {
+      response = Serial.read();
+      if(response == SIG_BOM)
+      {
+       readInput();
+      }
+    }
+  }
+}
+
+
