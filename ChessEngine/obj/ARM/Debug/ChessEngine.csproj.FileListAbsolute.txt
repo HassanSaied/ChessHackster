@@ -1,0 +1,16 @@
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\ARM\Debug\ChessEngine.dll
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\ARM\Debug\ChessEngine.pdb
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\ARM\Debug\ChessEngine.pri
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\ChessEngine.dll
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\ChessEngine.pdb
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\priconfig.xml
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\priconfig.xml.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\layout.resfiles
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\layout.resfiles.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\resources.resfiles
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\resources.resfiles.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\pri.resfiles
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\pri.resfiles.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\qualifiers.txt
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\qualifiers.txt.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\ARM\Debug\MultipleQualifiersPerDimensionFound.txt

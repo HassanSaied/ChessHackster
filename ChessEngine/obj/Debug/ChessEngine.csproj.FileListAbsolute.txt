@@ -1,0 +1,17 @@
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\Debug\ChessEngine.dll
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\Debug\ChessEngine.pdb
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\Debug\ChessEngine.pri
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\ChessEngine.csprojResolveAssemblyReference.cache
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\ChessEngine.dll
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\ChessEngine.pdb
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\priconfig.xml
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\priconfig.xml.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\layout.resfiles
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\layout.resfiles.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\resources.resfiles
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\resources.resfiles.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\pri.resfiles
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\pri.resfiles.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\qualifiers.txt
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\qualifiers.txt.intermediate
+C:\Users\sama_\Desktop\Projects\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\obj\Debug\MultipleQualifiersPerDimensionFound.txt
