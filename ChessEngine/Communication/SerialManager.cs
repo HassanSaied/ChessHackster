@@ -36,9 +36,10 @@ namespace ChessEngine.Communication.Serial
             serialDevice.DataBits = 8;
             serialDevice.Parity = SerialParity.None;
             serialDevice.StopBits = SerialStopBitCount.One;
-
+            serialDevice.ReadTimeout = System.TimeSpan.FromMilliseconds(500);
             writer = new DataWriter(serialDevice.OutputStream);
             reader = new DataReader(serialDevice.InputStream);
+            reader.InputStreamOptions = InputStreamOptions.ReadAhead;
         }
 
         private static void DeviceWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate args)
