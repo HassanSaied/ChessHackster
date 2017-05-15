@@ -10,7 +10,7 @@ using Windows.Storage;
 using System.Runtime.InteropServices.WindowsRuntime;
 
 /// <summary>
-/// Class responsible for parsing the last state change in ChessEngine to 
+/// Class responsible for parsing the last state change in ChessEngine to
 /// simple commands sent to the motors controller module
 /// </summary>
 namespace ChessEngine.Controller
@@ -67,7 +67,7 @@ namespace ChessEngine.Controller
 
         }
         /// <summary>
-        /// Basic constructor 
+        /// Basic constructor
         /// </summary>
         public Controller()
         {
@@ -130,7 +130,7 @@ namespace ChessEngine.Controller
             tempPos[1] = new byte[2];
             // White
             tempPieceType._pieceColor = Engine.ChessPieceColor.White;
-            // Rook 
+            // Rook
             tempPieceType._pieceType = Engine.ChessPieceType.Rook;
             tempPos[0][0] = 0;
             tempPos[1][0] = 0;
@@ -154,7 +154,7 @@ namespace ChessEngine.Controller
 
             // Black
             tempPieceType._pieceColor = Engine.ChessPieceColor.Black;
-            // Rook 
+            // Rook
             tempPieceType._pieceType = Engine.ChessPieceType.Rook;
             tempPos[0][0] = 9;
             tempPos[1][0] = 9;
@@ -177,7 +177,7 @@ namespace ChessEngine.Controller
             _deadPieces.Add(tempPieceType, tempTuple1);
 
 
-            // Testing 
+            // Testing
 
 
         }
@@ -189,7 +189,7 @@ namespace ChessEngine.Controller
         }
 
         /// <summary>
-        /// Main function of class that takes a state of chess engine 
+        /// Main function of class that takes a state of chess engine
         /// and parse it to basic movement commands for motor controller
         /// </summary>
         /// <remarks>
@@ -199,7 +199,7 @@ namespace ChessEngine.Controller
         /// 3- Send a basic move command to motor controller via I2C
         /// 4- Wait for End of Movement signal from motor controller via I2C
         /// 5- If still exists another basic move command jump to 3
-        /// 6- End 
+        /// 6- End
         /// </remarks>
         /// <param name="lastMove"> Last Chess Engine state </param>
 
@@ -237,7 +237,7 @@ namespace ChessEngine.Controller
                 return;
             }
 
-            // Ony moving to empty remains 
+            // Ony moving to empty remains
             _currMoveType = ControllerMoveTypes.MOVE2EMPTY;
 
         }
@@ -286,6 +286,7 @@ namespace ChessEngine.Controller
         {
             _inProgress = true;
             byte response;
+            int currentIndex = 0;
             while (_inProgress)
             {
                 response = 0;
@@ -304,7 +305,7 @@ namespace ChessEngine.Controller
                             {
                                 SerialManager.writer.WriteByte(SIG_CONFIRM);
                                 await SerialManager.writer.StoreAsync();
-                              
+
                                 SerialManager.writer.WriteBytes(state.ToArray());
                             }
                             else
@@ -318,6 +319,25 @@ namespace ChessEngine.Controller
                                 SerialManager.reader.ReadBuffer(SerialManager.reader.UnconsumedBufferLength);
                             } while (SerialManager.reader.UnconsumedBufferLength > 0);
                             Debug.Write("loop");
+                            currentIndex = 0;
+                            break;
+
+                        case SIG_SAVE:
+                            await SerialManager.reader.LoadAsync(14);
+                            byte[] stateToSave = new byte[14];
+                            SerialManager.reader.Read(stateToSave, 0, 14);
+                            // TODO: write to file
+                            break;
+
+                        case SIG_EOM:
+                            if(currentIndex <= _currCommands.Length)
+                            {
+                               SerialManager.writer.WriteByte(SIG_BOM);
+                               await SerialManager.writer.StoreAsync();
+                               SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
+                               await SerialManager.writer.StoreAsync();
+                            }
+
                             break;
                     }
                 }
@@ -338,8 +358,8 @@ namespace ChessEngine.Controller
         }
 
         /// <summary>
-        /// A simple parser from 1D array supported by chess engine to 
-        /// 2D array vied by motor controller 
+        /// A simple parser from 1D array supported by chess engine to
+        /// 2D array vied by motor controller
         /// </summary>
         /// <param name="pos1D"> Position provided by chess engine </param>
         /// <returns></returns>

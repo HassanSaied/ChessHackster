@@ -27,7 +27,7 @@ void oneLoopMove()
 {
   if ( ( moves[0] == 0 && moves[1] == 0 ) && ( moves[2] != 0 || moves [3] != 0 || moves[4] != 0 || moves[5] != 0 ) )
   {
-    magnetServo.write(90);         
+    magnetServo.write(90);
   }
   else
   {
@@ -68,7 +68,7 @@ void oneLoopMove()
       --currentRow;
     }
   }
-  
+
   else if (moves[2] != 0)
   {
     if (moves[2] > 0)
@@ -84,7 +84,7 @@ void oneLoopMove()
       --currentColumn;
     }
   }
-  
+
   else if (moves[3] != 0)
   {
     if (moves[3] > 0)
@@ -138,7 +138,7 @@ void oneLoopMove()
 void waitInput()
 {
   byte input[4];
-  byte temp, index = 0; 
+  byte temp, index = 0;
   bool finished = false;
 
   while(!finished)
@@ -167,7 +167,7 @@ void waitInput()
               index = -1;
             }
             break;
-            
+
           default:
             if ( temp <= MAX_PER_BYTE )
             {
@@ -184,7 +184,7 @@ void waitInput()
 
       if( index == -1 )
       {
-        ++index; 
+        ++index;
         Serial.write(SIG_EOM);
       }
 
@@ -207,7 +207,7 @@ void setup() {
     horizontalMotor.setMicrostep(16);
     magnetServo.attach(16);
     magnetServo.write(180);
-    
+
     // Set serial
     Serial.begin(9600);
 
@@ -216,7 +216,7 @@ void setup() {
     verticalMotor.calibrate();
     currentRow = 0;
     currentColumn = 0;
-   
+
     // Initiate
     Serial.write(SIG_VALIDATE);
     response = 0;
@@ -224,17 +224,17 @@ void setup() {
     {
       Serial.flush(); // Wait to be sure signal is sent
       Serial.write(SIG_VALIDATE);
-       
+
       if ( Serial.available() )
       {
         response = Serial.read();
       }
     }
 
-    // Response is either confirm then load, or cancel 
+    // Response is either confirm then load, or cancel
     if( response == SIG_CONFIRM)
     {
-      // Load last state 
+      // Load last state
       loadState(lastStateSourceRow, lastStateSourceColumn, lastStateMoves);
 
       // Move to last position
@@ -249,12 +249,12 @@ void setup() {
 
      while( moves[0] != 0 || moves[1] != 0 || moves[2] != 0 || moves[3] != 0 || moves[4] != 0 || moves[5] != 0 )
      {
-       oneLoopMove(); 
+       oneLoopMove();
        if (Serial.available())
        {
         if(Serial.read() == SIG_CANCEL)
         {
-          
+
           memset(moves, 0, sizeof(moves));
           return;
          }
@@ -264,18 +264,18 @@ void setup() {
       // Continue last state moves
       memcpy(moves, lastStateMoves, 6*sizeof(int));
       inProgress=true;
-    }      
+    }
 
 }
 
 void loop() {
 
-  oneLoopMove();  
-  
- 
+  oneLoopMove();
+
+
   if(inProgress)
   {
-    
+
     Serial.write(SIG_SAVE);
     // Save current state
     response = 0;
@@ -283,7 +283,7 @@ void loop() {
     {
       Serial.flush(); // Wait to be sure signal is sent
       Serial.write(SIG_SAVE);
- 
+
       if ( Serial.available() )
       {
         response = Serial.read();
@@ -294,10 +294,8 @@ void loop() {
     {
         memset( moves, 0, sizeof(moves));
         inProgress = false;
-    } 
-  }   
-  /*  
-
+    }
+  }
     saveState(currentRow, currentColumn, moves);
 
   }
@@ -310,7 +308,5 @@ void loop() {
   else
   {
     waitInput();
-  }*/
+  }
 }
-
-
