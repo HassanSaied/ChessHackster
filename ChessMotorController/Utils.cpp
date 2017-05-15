@@ -39,12 +39,43 @@ void parseInput(byte sourceRow, byte sourceColumn, byte destinationRow, byte des
 
 void loadState(int& sourceRow, int& sourceColumn, int& destinationRow, int& destinationColumn, int* moves)
 {
-  // TODO: implement
+  int tempSourceRow    = Serial.read() * BLOCK_SIZE;
+  int tempSourceColumn = Serial.read() * BLOCK_SIZE;
+
+  int tempMoves[6];
+
+  for(int i=0; i<6; ++i)
+  {
+    tempMoves[i] = Serial.read() * MAX_PER_BYTE + Serial.read();
+  }
+
+  if (Serial.available() )
+  {
+    if (Serial.read() != SIG_CANCEL)
+    {
+      sourceRow = tempSourceRow;
+      sourceColumn = tempSourceColumn;
+      memcpy(moves, tempMoves, 6*sizeof(int));
+    }
+  }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void saveState(int row, int col, int* moves)
 {
-  // TODO: implement
+  row /= BLOCK_SIZE;
+  col /= BLOCK_SIZE;
+    
+  byte temp[] = { row, col, 
+                  moves[0]/MAX_PER_BYTE, moves[0]%MAX_PER_BYTE, moves[1]/MAX_PER_BYTE, moves[1]%MAX_PER_BYTE, 
+                  moves[2]/MAX_PER_BYTE, moves[2]%MAX_PER_BYTE, moves[3]/MAX_PER_BYTE, moves[3]%MAX_PER_BYTE, 
+                  moves[4]/MAX_PER_BYTE, moves[4]%MAX_PER_BYTE, moves[5]/MAX_PER_BYTE, moves[5]%MAX_PER_BYTE};
+
+  for(int i=0; i<14; ++i)
+    {
+      Serial.write(temp[i]);
+      Serial.flush();
+    }
+  
 }

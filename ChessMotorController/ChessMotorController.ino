@@ -33,6 +33,9 @@ void oneLoopMove()
     magnetServo.write(180);
   }
 
+  // Fast return
+  if( !inProgress ) return;
+
   if (moves[0] != 0)
   {
     if (moves[0] > 0)
@@ -131,13 +134,68 @@ void oneLoopMove()
 
 }
 
-void readInput()
+void waitInput()
 {
-  byte sourceRow, sourceColumn, destinationRow, destinationColumn; 
+  byte input[4];
+  byte temp, index = 0; 
+  bool finished = false;
 
-  // TODO: implement
+  while(!finished)
+  {
+    if( Serial.available())
+    {
+      temp = Serial.read();
 
-  parseInput(sourceRow, sourceColumn, destinationRow, destinationColumn, currentRow, currentColumn, moves, inProgress);
+      if(temp == SIG_CANCEL)
+      {
+        index = -1;
+      }
+
+      else
+      {
+        switch (index)
+        {
+          // BOM signal
+          case 0:
+            if( temp == SIG_BOM)
+            {
+              ++index;
+            }
+            else
+            {
+              index = -1;
+            }
+            break;
+            
+          default:
+            if ( temp <= MAX_PER_BYTE )
+            {
+              input[index - 1] = temp;
+              ++index;
+            }
+            else
+            {
+              index = -1;
+            }
+            break;
+        }
+      }
+
+      if( index == -1 )
+      {
+        ++index; 
+        Serial.write(SIG_EOM);
+      }
+
+      else if( index == 5)
+      {
+        finished = true;
+      }
+
+    }
+  }
+
+  parseInput(input[0], input[1], input[2], input[3], currentRow, currentColumn, moves, inProgress);
 }
 
 void setup() {
@@ -220,27 +278,12 @@ void loop() {
     if(moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
     {
       inProgress = false;
-      Serial.write(SIG_EOM);
-      // Save current state
-      response = 0;
-      while ( response != SIG_CONFIRM )
-      {
-        Serial.flush(); // Wait to be sure signal is sent
-        Serial.write(SIG_EOM);
-      }
-
   }
 
+  // Checking for new order
   else
   {
-     if (Serial.available())
-    {
-      response = Serial.read();
-      if(response == SIG_BOM)
-      {
-       readInput();
-      }
-    }
+    waitInput();
   }
 }
 
