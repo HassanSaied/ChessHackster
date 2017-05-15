@@ -14,10 +14,13 @@ namespace ChessEngine.Speech
 {
     public class SpeechRecognition
     {
+     
         string SRGS_FILE = "grammar.xml";
         static SpeechRecognizer recognizer;
         ChessEngine.Engine.Engine engine;
         ChessEngine.Controller.Controller controller;
+
+        private System.Object _lock = new System.Object();
 
         public SpeechRecognition(ChessEngine.Engine.Engine engine, ChessEngine.Controller.Controller controller)
         {
@@ -64,6 +67,23 @@ namespace ChessEngine.Speech
         // Recognizer generated results
         private void RecognizerResultGenerated(SpeechContinuousRecognitionSession session, SpeechContinuousRecognitionResultGeneratedEventArgs args)
         {
+
+            // Check for different tags and initialize the variables
+            String Command = GetTag("Command", args);
+
+            lock (_lock)
+            {
+                if (controller.inProgress)
+                {
+                    if (Command == "Cancel")
+                    {
+                        controller.setCancel();
+                    }
+                    return;
+                }
+            }
+            
+
             // Output debug strings
             Debug.WriteLine(args.Result.Status);
             Debug.WriteLine(args.Result.Text);
@@ -73,8 +93,7 @@ namespace ChessEngine.Speech
             Debug.WriteLine("Count: " + count);
             Debug.WriteLine("Tag: " + args.Result.Constraint.Tag);
 
-            // Check for different tags and initialize the variables
-            String Command = GetTag("Command", args);
+            
             if (Command == "NewGame")
             {
                 engine.NewGame();
@@ -119,6 +138,7 @@ namespace ChessEngine.Speech
                 else
                 {
                     Debug.WriteLine("InValid Move");
+                    controller.simulate(engine.LastMove);
                 }
             }    
         }

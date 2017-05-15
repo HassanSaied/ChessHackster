@@ -16,10 +16,10 @@
     <item>
       <item> ChessMaster </item>
       <one-of>
-        <item>
+        <item>   
           Move
           <ruleref uri="#Move" />
-          <tag> out.Command = rules.latest(); </tag>
+          <tag> out.Motion = rules.latest(); out.Command = "Move";</tag>
         </item>
         <item>
           Undo <tag> out.Command = "Undo";</tag>

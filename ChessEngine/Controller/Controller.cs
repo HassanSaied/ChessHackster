@@ -1,9 +1,13 @@
 ﻿using ChessEngine.Communication.Serial;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 /// <summary>
 /// Class responsible for parsing the last state change in ChessEngine to 
@@ -20,22 +24,57 @@ namespace ChessEngine.Controller
         private Dictionary<ControllerPieceType, Tuple<bool[], byte[][]>> _deadPieces;
         private Tuple<bool, byte[]>[] _deadPawns;
         private const byte _numberOfCells = 8;
-        private const byte _serialProtocolSendInitiate = (byte)'i';
-        private const byte _serialProtocolSendCancel = (byte)'c';
-        private const byte _serialProtocolRespondLoad = (byte)'l';
-        private const byte _serialProtocolRespondSave = (byte)'s';
-        private const byte _serialProtocolRespondBegin = (byte)'b';
-        private const byte _serialProtocolRespondFinish = (byte)'f';
-        private byte[] _stateToBeSaved; 
+        private byte[] _stateToBeSaved;
+        FileStream _savedFile;
+        string _pathToSavedFile = "SavedState.txt" ;
 
+        // Constants
+        private const byte BLOCK_SIZE = 40;
+        private const byte MAX_PER_BYTE = 248;
+
+        // Signals
+        private const byte SIG_BOM = 249;
+        private const byte SIG_EOM  = 250;
+        private const byte SIG_LOAD  = 251;
+        private const byte SIG_SAVE   = 252;
+        private const byte SIG_VALIDATE= 253;
+        private const byte SIG_CONFIRM  = 254;
+        private const byte SIG_CANCEL   = 255;
+
+        private System.Object _lock = new System.Object();
+
+        private bool _cancel = false;
+        public void setCancel()
+        {
+            _cancel = true;
+        }
+
+        private bool _inProgress = false;
+        public bool inProgress
+        {
+            get { return _inProgress; }
+        }
+
+
+        Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+        Windows.Storage.StorageFile savedMoves;
+
+        public async Task openFile()
+        {
+            savedMoves = await storageFolder.CreateFileAsync("savedMoves.txt", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            byte[] tempArrFile = { 0, 1, 0, 100, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0 };
+            await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, tempArrFile);
+
+        }
         /// <summary>
         /// Basic constructor 
         /// </summary>
         public Controller()
-        {            
+        {
+
             // Assign places for dead pieces
             // Pawns
-            _deadPawns = new Tuple<bool, byte[]>[2];
+            _deadPawns = new Tuple<bool, byte[]>[10];
             Tuple<bool, byte[]> tempTuple = new Tuple<bool, byte[]>(false, new byte[2]);
             // Left side
             for (byte i = 0; i < 10; ++i)
@@ -55,7 +94,7 @@ namespace ChessEngine.Controller
             // King and Queen
             _deadPieces = new Dictionary<ControllerPieceType, Tuple<bool[], byte[][]>>();
             ControllerPieceType tempPieceType;
-            byte[][] tempPos = new byte[1][];
+            byte[][] tempPos = new byte[2][];
             tempPos[0] = new byte[2];
             tempPos[1] = new byte[2];
             bool[] tempBool = new bool[] { false, false };
@@ -114,7 +153,7 @@ namespace ChessEngine.Controller
             _deadPieces.Add(tempPieceType, tempTuple1);
 
             // Black
-            tempPieceType._pieceColor = Engine.ChessPieceColor.White;
+            tempPieceType._pieceColor = Engine.ChessPieceColor.Black;
             // Rook 
             tempPieceType._pieceType = Engine.ChessPieceType.Rook;
             tempPos[0][0] = 9;
@@ -137,6 +176,16 @@ namespace ChessEngine.Controller
             tempPos[1][1] = 6;
             _deadPieces.Add(tempPieceType, tempTuple1);
 
+
+            // Testing 
+
+
+        }
+
+        ~Controller()
+        {
+            _savedFile.Dispose();
+            File.Delete(_pathToSavedFile);
         }
 
         /// <summary>
@@ -154,12 +203,12 @@ namespace ChessEngine.Controller
         /// </remarks>
         /// <param name="lastMove"> Last Chess Engine state </param>
 
-        public void simulate(Engine.MoveContent lastMove)
+        public async Task simulate(Engine.MoveContent lastMove)
         {
-            _currMove = lastMove;
+           /* _currMove = lastMove;
             determineMovementType();
-            generateCommands();
-            serialCommunicate();
+            generateCommands();*/
+            await serialCommunicate();
         }
 
         /// <summary>
@@ -233,49 +282,56 @@ namespace ChessEngine.Controller
         /// <summary>
         /// Communicate between Chess engine and motor controller thorugh serial communication
         /// </summary>
-        private void serialCommunicate()
+        private async Task serialCommunicate()
         {
-            // Send initiate signal and wait for response
-            SerialManager.writer.WriteByte(_serialProtocolSendInitiate);
-            while (SerialManager.reader.UnconsumedBufferLength == 0)
+            _inProgress = true;
+            byte response;
+            while (_inProgress)
             {
-                // TODO: Check if move cancelled
-            }
+                response = 0;
 
-            // Get response and check it
-            byte response = SerialManager.reader.ReadByte();
-            if( response == _serialProtocolRespondLoad )
-            {
-                // TODO: Load saved state and wait for begin signal while checking for cancel 
-            }
-
-            // Indicator of movement 
-            bool moving = false;
-
-            // After begin signal is recieved send command one bye one while checking for cancel 
-            for (int i = 0; i < _currCommands.Count; ++i)
-            {
-                SerialManager.writer.WriteBytes(_currCommands[i]);
-                moving = true;
-                while (moving)
+                await SerialManager.reader.LoadAsync(1);
+                if (SerialManager.reader.UnconsumedBufferLength > 0)
                 {
-                    while (SerialManager.reader.UnconsumedBufferLength == 0)
-                    {
-                        // TODO: Check if move cancelled
-                    }
                     response = SerialManager.reader.ReadByte();
-                    if (response == _serialProtocolRespondSave)
+
+                    switch (response)
                     {
-                        // Safety check for waiting full input
-                        while (SerialManager.reader.UnconsumedBufferLength < 8) ;
-                        // Read state
-                        SerialManager.reader.ReadBytes(_stateToBeSaved);
-                        // TODO: Save state
+
+                        case SIG_VALIDATE:
+                            var state = await Windows.Storage.FileIO.ReadBufferAsync(savedMoves);
+                            if (state.Length>0)
+                            {
+                                SerialManager.writer.WriteByte(SIG_CONFIRM);
+                                await SerialManager.writer.StoreAsync();
+                              
+                                SerialManager.writer.WriteBytes(state.ToArray());
+                            }
+                            else
+                            {
+                                SerialManager.writer.WriteByte(SIG_CANCEL);
+                            }
+                            await SerialManager.writer.StoreAsync();
+                            do
+                            {
+                                await SerialManager.reader.LoadAsync(1);
+                                SerialManager.reader.ReadBuffer(SerialManager.reader.UnconsumedBufferLength);
+                            } while (SerialManager.reader.UnconsumedBufferLength > 0);
+                            Debug.Write("loop");
+                            break;
                     }
-                    else // Finish signal
+                }
+
+                // Cancelling
+                lock (_lock)
+                {
+                    if ( _cancel )
                     {
-                        // TODO: Save final state then send initiate again
-                        moving = false;
+                        SerialManager.writer.WriteByte(SIG_CANCEL);
+                        SerialManager.writer.StoreAsync();
+                        _cancel = false;
+                        _inProgress = false;
+                        Debug.WriteLine("Success");
                     }
                 }
             }

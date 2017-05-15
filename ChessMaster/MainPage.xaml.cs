@@ -43,6 +43,7 @@ namespace ChessMaster
             engine.GameDifficulty = Engine.Difficulty.Easy;
             engine.NewGame();
             var controller = new Controller();
+            controller.openFile();
             var reco = new SpeechRecognition(engine, controller);           
            }
         public async System.Threading.Tasks.Task SpeakAsync()
