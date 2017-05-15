@@ -21,7 +21,7 @@ void parseInput(byte, byte, byte, byte, int&, int&, int*, bool&);
 void saveState(int, int, int*);
 
 // Load a previously saved state (source and moves) and calculate (destination)
-void loadState(int&, int&, int&, int&, int*);
+void loadState(byte&, byte&, int*);
 
 
 

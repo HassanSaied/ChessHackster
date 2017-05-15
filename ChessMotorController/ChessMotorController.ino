@@ -15,7 +15,8 @@ int currentColumn;
 int moves[6];
 
 // Last saved state indicators
-int lastStateSourceRow, lastStateSourceColumn, lastStateDestinationRow, lastStateSDestinationColumn;
+byte lastStateSourceRow, lastStateSourceColumn;
+int lastStateMoves[6];
 
 // CNC motors
 Motor verticalMotor(200, 3, 2, 4, 5, 6, 14, TOWARDS_MOTOR);
@@ -222,6 +223,7 @@ void setup() {
     while ( response != SIG_CONFIRM && response != SIG_CANCEL )
     {
       Serial.flush(); // Wait to be sure signal is sent
+      Serial.write(SIG_VALIDATE);
        
       if ( Serial.available() )
       {
@@ -233,12 +235,35 @@ void setup() {
     if( response == SIG_CONFIRM)
     {
       // Load last state 
-      loadState(lastStateSourceRow, lastStateSourceColumn, lastStateDestinationRow, lastStateSDestinationColumn, moves);
+      loadState(lastStateSourceRow, lastStateSourceColumn, lastStateMoves);
 
-      // Get instructions
-      parseInput( lastStateSourceRow / BLOCK_SIZE, lastStateSourceColumn / BLOCK_SIZE,
-                  lastStateDestinationRow / BLOCK_SIZE, lastStateSDestinationColumn / BLOCK_SIZE,
-                  currentRow, currentColumn, moves, inProgress);          
+      // Move to last position
+      parseInput( 0, 0,  lastStateSourceRow, lastStateSourceColumn, currentRow, currentColumn, moves, inProgress);
+
+      moves[0] += (moves[2] + moves[4]);
+      moves[1] += (moves[3] + moves[5]);
+      moves[2] = 0;
+      moves[3] = 0;
+      moves[4] = 0;
+      moves[5] = 0;
+
+     while( moves[0] != 0 || moves[1] != 0 || moves[2] != 0 || moves[3] != 0 || moves[4] != 0 || moves[5] != 0 )
+     {
+       oneLoopMove(); 
+       if (Serial.available())
+       {
+        if(Serial.read() == SIG_CANCEL)
+        {
+          
+          memset(moves, 0, sizeof(moves));
+          return;
+         }
+       }
+     }
+
+      // Continue last state moves
+      memcpy(moves, lastStateMoves, 6*sizeof(int));
+      inProgress=true;
     }      
 
 }
@@ -269,7 +294,9 @@ void loop() {
     {
         memset( moves, 0, sizeof(moves));
         inProgress = false;
-    }      
+    } 
+  }   
+  /*  
 
     saveState(currentRow, currentColumn, moves);
 
@@ -277,13 +304,13 @@ void loop() {
     if(moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
     {
       inProgress = false;
-  }
+    }
 
   // Checking for new order
   else
   {
     waitInput();
-  }
+  }*/
 }
 
 

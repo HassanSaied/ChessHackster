@@ -37,26 +37,15 @@ void parseInput(byte sourceRow, byte sourceColumn, byte destinationRow, byte des
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void loadState(int& sourceRow, int& sourceColumn, int& destinationRow, int& destinationColumn, int* moves)
+void loadState(byte& sourceRow, byte& sourceColumn, int* moves)
 {
-  int tempSourceRow    = Serial.read() * BLOCK_SIZE;
-  int tempSourceColumn = Serial.read() * BLOCK_SIZE;
-
-  int tempMoves[6];
+  while ( Serial.available() < 14 );
+  sourceColumn   = Serial.read();
+  sourceRow = Serial.read();
 
   for(int i=0; i<6; ++i)
   {
-    tempMoves[i] = Serial.read() * MAX_PER_BYTE + Serial.read();
-  }
-
-  if (Serial.available() )
-  {
-    if (Serial.read() != SIG_CANCEL)
-    {
-      sourceRow = tempSourceRow;
-      sourceColumn = tempSourceColumn;
-      memcpy(moves, tempMoves, 6*sizeof(int));
-    }
+    moves[i] = Serial.read() * MAX_PER_BYTE + Serial.read();
   }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
