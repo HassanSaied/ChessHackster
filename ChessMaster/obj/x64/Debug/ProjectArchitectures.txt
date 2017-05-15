@@ -1,0 +1,2 @@
+C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\ChessEngine.csproj;x64
+C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\ChessMaster.csproj;x64

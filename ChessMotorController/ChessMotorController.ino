@@ -206,24 +206,23 @@ void setup() {
     horizontalMotor.setMicrostep(16);
     magnetServo.attach(16);
     magnetServo.write(180);
+    
+    // Set serial
+    Serial.begin(9600);
 
     // Setitng initial position to clear any error
     horizontalMotor.calibrate();
     verticalMotor.calibrate();
     currentRow = 0;
     currentColumn = 0;
-
-    // Set serial
-    Serial.begin(9600);
-    
+   
     // Initiate
     Serial.write(SIG_VALIDATE);
     response = 0;
     while ( response != SIG_CONFIRM && response != SIG_CANCEL )
     {
       Serial.flush(); // Wait to be sure signal is sent
-      Serial.write(SIG_VALIDATE);
- 
+       
       if ( Serial.available() )
       {
         response = Serial.read();

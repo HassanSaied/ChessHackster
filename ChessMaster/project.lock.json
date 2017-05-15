@@ -22012,20 +22012,20 @@
     "UAP,Version=v10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Bombo\\.nuget\\packages\\": {}
+    "C:\\Users\\hsaie\\.nuget\\packages\\": {}
   },
   "project": {
     "restore": {
-      "projectUniqueName": "D:\\CMP\\ChessHackster\\ChessMaster\\ChessMaster.csproj",
+      "projectUniqueName": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessMaster\\ChessMaster.csproj",
       "projectName": "ChessMaster",
-      "projectPath": "D:\\CMP\\ChessHackster\\ChessMaster\\ChessMaster.csproj",
-      "projectJsonPath": "D:\\CMP\\ChessHackster\\ChessMaster\\project.json",
+      "projectPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessMaster\\ChessMaster.csproj",
+      "projectJsonPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessMaster\\project.json",
       "projectStyle": "ProjectJson",
       "frameworks": {
         "uap10.0": {
           "projectReferences": {
-            "D:\\CMP\\ChessHackster\\ChessEngine\\ChessEngine.csproj": {
-              "projectPath": "D:\\CMP\\ChessHackster\\ChessEngine\\ChessEngine.csproj"
+            "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj": {
+              "projectPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj"
             }
           }
         }

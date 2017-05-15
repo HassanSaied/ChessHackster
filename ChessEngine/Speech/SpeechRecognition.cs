@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChessEngine.Communication.Serial;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -74,35 +75,52 @@ namespace ChessEngine.Speech
 
             // Check for different tags and initialize the variables
             String Command = GetTag("Command", args);
-            String PieceType = GetTag("PieceType", args);
-            String SourceRow = GetTag("SourceRow", args);
-            String SourceColumn = GetTag("SourceColumn", args);
-            String DistinationRow = GetTag("DistinationRow", args);
-            String DistinationColumn = GetTag("DistinationColumn", args);
+            if (Command == "NewGame")
+            {
+                engine.NewGame();
+                return;
+            }
+            else if (Command == "Undo")
+            {
+                engine.Undo();
+                return;
+            }
+            else if (Command == "Cancel")
+            {
+                engine.Undo();
+                return;
+            }
+            else if (Command == "Move")
+            {
+                String PieceType = GetTag("PieceType", args);
+                String SourceRow = GetTag("SourceRow", args);
+                String SourceColumn = GetTag("SourceColumn", args);
+                String DistinationRow = GetTag("DistinationRow", args);
+                String DistinationColumn = GetTag("DistinationColumn", args);
 
 
-            Debug.WriteLine("PieceType: " + PieceType + "\n" + ", SourceRow: " + SourceRow + ", SourceColumn: " + SourceColumn + " to "
-                + " DistinationRow: " + DistinationRow + " DistinationColumn: " + DistinationColumn);
-           
-            if (engine.IsValidMove(Convert.ToByte(SourceColumn[0] - 'A'),
-                Convert.ToByte(8 - int.Parse(SourceRow)),
-                Convert.ToByte(DistinationColumn[0] - 'A'),
-                Convert.ToByte(8 - int.Parse(DistinationRow))))
-            {
-                engine.MovePiece(
-                  Convert.ToByte(SourceColumn[0] - 'A'),
-                  Convert.ToByte(8 - int.Parse(SourceRow)),
-                  Convert.ToByte(DistinationColumn[0] - 'A'),
-                  Convert.ToByte(8 - int.Parse(DistinationRow)));
-                engine.AiPonderMove(null);
-                controller.simulate(engine.LastMove);
-                Debug.Write("Valid Move");
-            }
-            else
-            {
-                Debug.WriteLine("InValid Move");
-            }
-               
+                Debug.WriteLine("PieceType: " + PieceType + "\n" + ", SourceRow: " + SourceRow + ", SourceColumn: " + SourceColumn + " to "
+                    + " DistinationRow: " + DistinationRow + " DistinationColumn: " + DistinationColumn);
+
+                if (engine.IsValidMove(Convert.ToByte(SourceColumn[0] - 'A'),
+                    Convert.ToByte(8 - int.Parse(SourceRow)),
+                    Convert.ToByte(DistinationColumn[0] - 'A'),
+                    Convert.ToByte(8 - int.Parse(DistinationRow))))
+                {
+                    engine.MovePiece(
+                      Convert.ToByte(SourceColumn[0] - 'A'),
+                      Convert.ToByte(8 - int.Parse(SourceRow)),
+                      Convert.ToByte(DistinationColumn[0] - 'A'),
+                      Convert.ToByte(8 - int.Parse(DistinationRow)));
+                    engine.AiPonderMove(null);
+                    controller.simulate(engine.LastMove);
+                    Debug.Write("Valid Move");
+                }
+                else
+                {
+                    Debug.WriteLine("InValid Move");
+                }
+            }    
         }
 
         private string GetTag(string Tag, SpeechContinuousRecognitionResultGeneratedEventArgs args)

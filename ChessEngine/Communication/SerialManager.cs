@@ -22,6 +22,9 @@ namespace ChessEngine.Communication.Serial
         public static SerialDevice serialDevice = null;
         public static async Task Initiate()
         {
+            if (writer != null || reader != null || serialDevice != null)
+                return;
+
             var deviceSelector = SerialDevice.GetDeviceSelectorFromUsbVidPid(ArduinoDevice.Vid, ArduinoDevice.Pid);
             var deviceWatcher = DeviceInformation.CreateWatcher(deviceSelector);
             deviceWatcher.Added += DeviceWatcher_AddedAsync;

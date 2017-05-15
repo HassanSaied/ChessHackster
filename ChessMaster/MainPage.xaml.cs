@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Text;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -37,28 +38,37 @@ namespace ChessMaster
         public MainPage()
         {
             this.InitializeComponent();
-            /*engine = new Engine();
+            SerialManager.Initiate();
+            engine = new Engine();
             engine.GameDifficulty = Engine.Difficulty.Easy;
             engine.NewGame();
             var controller = new Controller();
-            SerialManager.Initiate();
-            var reco = new SpeechRecognition(engine, controller);*/
-            SpeakAsync(null);
+            var reco = new SpeechRecognition(engine, controller);           
            }
-        public async System.Threading.Tasks.Task SpeakAsync(string s)
+        public async System.Threading.Tasks.Task SpeakAsync()
         {
-            byte x;
-            await SerialManager.Initiate();
-            SerialManager.reader.InputStreamOptions = Windows.Storage.Streams.InputStreamOptions.Partial;
-            if(SerialManager.reader.UnconsumedBufferLength > 0)
-                x = SerialManager.reader.ReadByte();
-            //SpeakAsync("Oh yeah, Just there, Right There");
-            //MediaElement mediaElement = this.media;
-            //var synth = new SpeechSynthesizer();
-            //var stream = await synth.SynthesizeTextToStreamAsync(s);
-            //mediaElement.SetSource(stream, stream.ContentType);
-            //mediaElement.Play();
-            Debug.Write(123);
+            try
+            {
+                await SerialManager.Initiate();
+                SerialManager.writer.WriteByte(200);
+                await SerialManager.writer.StoreAsync();
+
+                byte x;
+                SerialManager.reader.InputStreamOptions = Windows.Storage.Streams.InputStreamOptions.ReadAhead;
+                SerialManager.reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
+                await SerialManager.reader.LoadAsync(3);
+                if (SerialManager.reader.UnconsumedBufferLength > 0)
+                {
+                    x = SerialManager.reader.ReadByte();
+                    x = SerialManager.reader.ReadByte();
+                    x = SerialManager.reader.ReadByte();
+                }
+                    
+            }
+            catch(Exception e)
+            { 
+
+            }
         }
 
     }
