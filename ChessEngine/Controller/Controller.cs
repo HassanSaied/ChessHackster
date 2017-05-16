@@ -20,172 +20,123 @@ namespace ChessEngine.Controller
     public class Controller
     {
 
+        // Custom Pair
+        private class Pair
+        {
+           public bool   _state;
+           public byte[] _position; 
+
+           public Pair(bool s, byte[] p)
+            {
+                _state = s;
+                _position = p;
+            }
+        }
+
+        // For moves and related commands
         private Engine.MoveContent _currMove;
         private ControllerMoveTypes _currMoveType;
         private List<byte[]> _currCommands;
-        private Dictionary<ControllerPieceType, Tuple<bool[], byte[][]>> _deadPieces;
-        private Tuple<bool, byte[]>[] _deadPawns;
-        private const byte _numberOfCells = 8;
-        private byte[] _stateToBeSaved;
-        FileStream _savedFile;
-        string _pathToSavedFile = "SavedState.txt" ;
 
+        // For killing and promotion
+        private Dictionary<ControllerPieceType, Pair[]> _deadPieces; 
+        private Pair[] _deadPawns;
+        
         // Constants
         private const byte BLOCK_SIZE = 40;
         private const byte MAX_PER_BYTE = 248;
+        private const byte _numberOfCells = 8;
 
         // Signals
         private const byte SIG_BOM = 249;
         private const byte SIG_EOM  = 250;
         private const byte SIG_LOAD  = 251;
         private const byte SIG_SAVE   = 252;
-        private const byte SIG_VALIDATE= 253;
+        public const byte SIG_VALIDATE= 253;
         private const byte SIG_CONFIRM  = 254;
         private const byte SIG_CANCEL   = 255;
 
-        private System.Object _lock = new System.Object();
+        // For saving moves
+        Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+        Windows.Storage.StorageFile savedMoves;
 
+        // Shared object and related
+        private System.Object _lock = new System.Object();
         private bool _cancel = false;
         public void setCancel()
         {
             _cancel = true;
         }
-
         private bool _inProgress = false;
         public bool inProgress
         {
             get { return _inProgress; }
         }
 
-
-        Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-        Windows.Storage.StorageFile savedMoves;
-
-        public async Task openFile()
-        {
-            savedMoves = await storageFolder.CreateFileAsync("savedMoves.txt", Windows.Storage.CreationCollisionOption.ReplaceExisting);
-
-        }
         /// <summary>
         /// Basic constructor
         /// </summary>
         public Controller()
         {
+            // Busy till validate
+            _inProgress = true;
+
+            // Start communication
+            initiateCommunication();
 
             // Assign places for dead pieces
             // Pawns
-            _deadPawns = new Tuple<bool, byte[]>[10];
-            Tuple<bool, byte[]> tempTuple = new Tuple<bool, byte[]>(false, new byte[2]);
-            // Left side
-            for (byte i = 0; i < 10; ++i)
+            _deadPawns = new Pair[16];
+            for (byte i = 1; i<=8; ++i)
             {
-                tempTuple.Item2[0] = 0;
-                tempTuple.Item2[1] = i;
-                _deadPawns[i] = tempTuple;
-            }
-            // Right side
-            for (byte i = 0; i < 10; ++i)
-            {
-                tempTuple.Item2[0] = 7;
-                tempTuple.Item2[1] = i;
-                _deadPawns[i] = tempTuple;
+                _deadPawns[i - 1] = new Pair(false, new byte[] { 0, i });
+                _deadPawns[i + 7] = new Pair(false, new byte[] { 9, i }); 
             }
 
-            // King and Queen
-            _deadPieces = new Dictionary<ControllerPieceType, Tuple<bool[], byte[][]>>();
+            // Other pieces
+            _deadPieces = new Dictionary<ControllerPieceType, Pair[]>();
             ControllerPieceType tempPieceType;
-            byte[][] tempPos = new byte[2][];
-            tempPos[0] = new byte[2];
-            tempPos[1] = new byte[2];
-            bool[] tempBool = new bool[] { false, false };
-            Tuple<bool[], byte[][]> tempTuple1 = new Tuple<bool[], byte[][]>(tempBool, tempPos);
-            // White
+            // white
             tempPieceType._pieceColor = Engine.ChessPieceColor.White;
+            // Rooks
+            tempPieceType._pieceType = Engine.ChessPieceType.Rook;
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 8, 9 }), new Pair(false, new byte[] { 7, 9 }) });
+            // Knights
+            tempPieceType._pieceType = Engine.ChessPieceType.Knight;
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 6, 9 }), new Pair(false, new byte[] { 5, 9 }) });
+            // Bishops
+            tempPieceType._pieceType = Engine.ChessPieceType.Bishop;
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 4, 9 }), new Pair(false, new byte[] { 3, 9 }) });
             // Queen
             tempPieceType._pieceType = Engine.ChessPieceType.Queen;
-            tempPos[0][0] = 0;
-            tempPos[0][1] = 4;
-            _deadPieces.Add(tempPieceType, tempTuple1);
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 2, 9 }) });
             // King
             tempPieceType._pieceType = Engine.ChessPieceType.King;
-            tempPos[0][0] = 0;
-            tempPos[0][1] = 5;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-            // Black
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 1, 9 }) });
+
+            // black
             tempPieceType._pieceColor = Engine.ChessPieceColor.Black;
+            // Rooks
+            tempPieceType._pieceType = Engine.ChessPieceType.Rook;
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 8, 0 }), new Pair(false, new byte[] { 7, 0 }) });
+            // Knights
+            tempPieceType._pieceType = Engine.ChessPieceType.Knight;
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 6, 0 }), new Pair(false, new byte[] { 5, 0 }) });
+            // Bishops
+            tempPieceType._pieceType = Engine.ChessPieceType.Bishop;
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 4, 0 }), new Pair(false, new byte[] { 3, 0 }) });
             // Queen
             tempPieceType._pieceType = Engine.ChessPieceType.Queen;
-            tempPos[0][0] = 9;
-            tempPos[0][1] = 5;
-            _deadPieces.Add(tempPieceType, tempTuple1);
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 2, 0 }) });
             // King
             tempPieceType._pieceType = Engine.ChessPieceType.King;
-            tempPos[0][0] = 9;
-            tempPos[0][1] = 4;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-
-            // Others
-            tempPos = new byte[2][];
-            tempPos[0] = new byte[2];
-            tempPos[1] = new byte[2];
-            // White
-            tempPieceType._pieceColor = Engine.ChessPieceColor.White;
-            // Rook
-            tempPieceType._pieceType = Engine.ChessPieceType.Rook;
-            tempPos[0][0] = 0;
-            tempPos[1][0] = 0;
-            tempPos[0][1] = 1;
-            tempPos[1][1] = 8;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-            // Knight
-            tempPieceType._pieceType = Engine.ChessPieceType.Knight;
-            tempPos[0][0] = 0;
-            tempPos[1][0] = 0;
-            tempPos[0][1] = 2;
-            tempPos[1][1] = 7;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-            // Bishop
-            tempPieceType._pieceType = Engine.ChessPieceType.Bishop;
-            tempPos[0][0] = 0;
-            tempPos[1][0] = 0;
-            tempPos[0][1] = 3;
-            tempPos[1][1] = 6;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-
-            // Black
-            tempPieceType._pieceColor = Engine.ChessPieceColor.Black;
-            // Rook
-            tempPieceType._pieceType = Engine.ChessPieceType.Rook;
-            tempPos[0][0] = 9;
-            tempPos[1][0] = 9;
-            tempPos[0][1] = 1;
-            tempPos[1][1] = 8;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-            // Knight
-            tempPieceType._pieceType = Engine.ChessPieceType.Knight;
-            tempPos[0][0] = 9;
-            tempPos[1][0] = 9;
-            tempPos[0][1] = 2;
-            tempPos[1][1] = 7;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-            // Bishop
-            tempPieceType._pieceType = Engine.ChessPieceType.Bishop;
-            tempPos[0][0] = 9;
-            tempPos[1][0] = 9;
-            tempPos[0][1] = 3;
-            tempPos[1][1] = 6;
-            _deadPieces.Add(tempPieceType, tempTuple1);
-
-
-            // Testing
-
+            _deadPieces.Add(tempPieceType, new Pair[] { new Pair(false, new byte[] { 1, 0 }) });
 
         }
 
         ~Controller()
         {
-            _savedFile.Dispose();
-            File.Delete(_pathToSavedFile);
+
         }
 
         /// <summary>
@@ -209,6 +160,7 @@ namespace ChessEngine.Controller
             determineMovementType();
             generateCommands();
             await serialCommunicate();
+            // TODO: play soundtracks
         }
 
         /// <summary>
@@ -258,7 +210,7 @@ namespace ChessEngine.Controller
                     break;
 
                 case (ControllerMoveTypes.MOVE_AND_KILL):
-                    ControllerPieceType tempKilledPiece;
+                    ControllerPieceType tempKilledPiece = new ControllerPieceType();
                     tempKilledPiece._pieceColor = _currMove.TakenPiece.PieceColor;
                     tempKilledPiece._pieceType = _currMove.TakenPiece.PieceType;
                     killPiece(_currMove.TakenPiece.Position, tempKilledPiece);
@@ -279,146 +231,93 @@ namespace ChessEngine.Controller
             }
         }
 
+        private async Task initiateCommunication()
+        {
+            // Open file
+            savedMoves = await storageFolder.CreateFileAsync("savedMoves.txt", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            await SerialManager.Initiate();
+
+            do
+            {
+                await SerialManager.reader.LoadAsync(1);
+            } while (SerialManager.reader.UnconsumedBufferLength < 1);
+
+            if (Controller.SIG_VALIDATE != SerialManager.reader.ReadByte())
+                throw new Exception("Fatal Error: master was disconnected and slave was not");
+
+
+            SerialManager.writer.WriteByte(SIG_CANCEL);
+            await SerialManager.writer.StoreAsync();
+          
+            while (SerialManager.reader.UnconsumedBufferLength > 0)
+            {
+                SerialManager.reader.ReadByte();
+            }
+
+            _inProgress = false;
+            
+        }
+
         /// <summary>
         /// Communicate between Chess engine and motor controller thorugh serial communication
         /// </summary>
         private async Task serialCommunicate()
         {
             _inProgress = true;
-            byte response;
             int currentIndex = 0;
+
             while (_inProgress)
             {
-                response = 0;
 
-                await SerialManager.reader.LoadAsync(1);
-                if (SerialManager.reader.UnconsumedBufferLength > 0)
+                if (currentIndex < _currCommands.Count)
                 {
-                    response = SerialManager.reader.ReadByte();
-                    if (response < MAX_PER_BYTE) continue;
+                    SerialManager.writer.WriteByte(SIG_BOM);
+                    await SerialManager.writer.StoreAsync();
+                    SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
+                    await SerialManager.writer.StoreAsync();
+                }
+
+                else
+                {
+                    _inProgress = false;
+                    return;
+                }
+
+                bool EOM = false;
+                while (!EOM)
+                {
+                    do
+                    {
+                        await SerialManager.reader.LoadAsync(1);
+                    } while (SerialManager.reader.UnconsumedBufferLength == 0);
+                    byte response = SerialManager.reader.ReadByte();
                     switch (response)
                     {
 
-                        case SIG_VALIDATE:
-
-                            var state = await Windows.Storage.FileIO.ReadBufferAsync(savedMoves);
-                            if (state.Length>0)
-                            {
-                                SerialManager.writer.WriteByte(SIG_CONFIRM);
-                                await SerialManager.writer.StoreAsync();
-
-                                SerialManager.writer.WriteBytes(state.ToArray());
-                            }
-                            else
-                            {
-                                SerialManager.writer.WriteByte(SIG_CANCEL);
-                            }
-                            await SerialManager.writer.StoreAsync();
-                            try
-                            {
-                                do
-                                {
-
-
-
-                                    CancellationToken token = new CancellationToken();
-                                    token.
-                                    response = 0;
-                                    await SerialManager.reader.LoadAsync(1).AsTask(token);
-                                    if (SerialManager.reader.UnconsumedBufferLength > 0)
-                                        response = SerialManager.reader.ReadByte();
-                                }
-
-                                while (response == SIG_VALIDATE);
-                            }
-                            catch (Exception e)
-                            {
-
-                            }
-                            Debug.Write("loop");
-                            currentIndex = 0;
-                            break;
-
                         case SIG_SAVE:
-                            try
+                            SerialManager.writer.WriteByte(SIG_CONFIRM);
+                            await SerialManager.writer.StoreAsync();
+                            do
                             {
-                                SerialManager.writer.WriteByte(SIG_CONFIRM);
-                                await SerialManager.writer.StoreAsync();
-                                do
-                                {
-                                    response = 0;
-                                    await SerialManager.reader.LoadAsync(1);
-                                    if (SerialManager.reader.UnconsumedBufferLength > 0)
-                                        response = SerialManager.reader.ReadByte();
-                                }
-                                while (response == SIG_SAVE);
-                                byte[] stateToSave = new byte[14];
-                                stateToSave[0] = response;
-                                do
-                                {
-                                    await SerialManager.reader.LoadAsync(13);
-                                } while (SerialManager.reader.UnconsumedBufferLength < 13);
-                                for (int i = 0; i < 13; i++)
-                                {
-                                    stateToSave[i + 1] = SerialManager.reader.ReadByte();
-                                }
-                                await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
-                            }
-                            catch (Exception e)
-                            {
+                                await SerialManager.reader.LoadAsync(16);
+                            } while (SerialManager.reader.UnconsumedBufferLength < 16);
 
-                            }
+                            byte[] stateToSave = new byte[16];
+                            SerialManager.reader.ReadBytes(stateToSave);
+                            await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
                             break;
-
+                        case SIG_VALIDATE:
+                            throw new Exception("Error : Slave resetted");
                         case SIG_EOM:
-                            try
-                            {
-                                if (currentIndex < _currCommands.Count)
-                                {
-                                    SerialManager.writer.WriteByte(SIG_BOM);
-                                    await SerialManager.writer.StoreAsync();
-                                    SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
-                                    await SerialManager.writer.StoreAsync();
-                                }
-                                else
-                                {
-                                    return;
-                                }
-                            }
-                            catch(Exception e)
-                            {
-
-                            }
+                            EOM = true;
                             break;
-                    }
-                }
+                        default:
+                            throw new Exception(response.ToString());
+                            //var x = SerialManager.serialDevice.InputStream.AsStreamForRead();
 
-                // Cancelling
-                lock (_lock)
-                {
-                    if ( _cancel )
-                    {
-                        SerialManager.writer.WriteByte(SIG_CANCEL);
-                        SerialManager.writer.StoreAsync();
-                        _cancel = false;
-                        _inProgress = false;
-                        Debug.WriteLine("Success");
                     }
                 }
             }
-        }
-
-        private static async Task clearBuffer()
-        {
-            do
-            {
-                await SerialManager.reader.LoadAsync(1000);
-                var buffer = SerialManager.reader.ReadBuffer(SerialManager.reader.UnconsumedBufferLength);
-                buffer.ToArray();
-            } while (SerialManager.reader.UnconsumedBufferLength > 0);
-            SerialManager.reader.DetachBuffer();
-            IBuffer clearingBuffer = new Windows.Storage.Streams.Buffer(UInt32.MaxValue-1);
-            await SerialManager.serialDevice.InputStream.ReadAsync(clearingBuffer,clearingBuffer.Capacity,InputStreamOptions.ReadAhead);
         }
 
         /// <summary>
@@ -431,9 +330,9 @@ namespace ChessEngine.Controller
         {
             byte[] pos2D = new byte[2];
             // row
-            pos2D[0] = (byte)(8 - (pos1D / _numberOfCells));
+            pos2D[0] = (byte)(_numberOfCells - (pos1D / _numberOfCells));
             // col
-            pos2D[1] = (byte)(8 -(pos1D % _numberOfCells));
+            pos2D[1] = (byte)(_numberOfCells -(pos1D % _numberOfCells));
             return pos2D;
         }
 
@@ -448,14 +347,15 @@ namespace ChessEngine.Controller
                 ControllerPieceType tempPiece;
                 tempPiece._pieceColor = _currMove.MovingPiecePrimary.PieceColor;
                 tempPiece._pieceType = _currMove.MovingPiecePrimary.PieceType;
-                for (int i = 0; i < _deadPieces[tempPiece].Item2.Length; ++i)
+                for (int i = 0; i<_deadPieces[tempPiece].Length; ++i)
                 {
-                    if (_deadPieces[tempPiece].Item1[i])
+                    if (_deadPieces[tempPiece][i]._state)
                     {
                         killPiece(_currMove.MovingPiecePrimary.DstPosition,
                             tempPiece);
-                        _currCommands.Add(_deadPieces[tempPiece].Item2[i].Concat(
+                        _currCommands.Add(_deadPieces[tempPiece][i]._position.Concat(
                             get2DPos(_currMove.MovingPiecePrimary.DstPosition)).ToArray());
+                        _deadPieces[tempPiece][i]._state = false;
                     }
                 }
             }
@@ -470,13 +370,14 @@ namespace ChessEngine.Controller
         {
             if (pieceType._pieceType != Engine.ChessPieceType.Pawn)
             {
-                for (int i = 0; i < _deadPieces[pieceType].Item2.Length; ++i)
+                for (int i = 0; i < _deadPieces[pieceType].Length; ++i)
                 {
-                    if (!_deadPieces[pieceType].Item1[i])
+                    if (!_deadPieces[pieceType][i]._state)
                     {
                         _currCommands.Add(get2DPos(piecePos).Concat(
-                           _deadPieces[pieceType].Item2[i]).ToArray());
-                        _deadPieces[pieceType].Item1[i] = true;
+                           _deadPieces[pieceType][i]._position).ToArray());
+                        _deadPieces[pieceType][i]._state = true;
+                        break;
                     }
                 }
             }
@@ -484,11 +385,12 @@ namespace ChessEngine.Controller
             {
                 for (int i = 0; i < _deadPawns.Length; ++i)
                 {
-                    if (!_deadPawns[i].Item1)
+                    if (!_deadPawns[i]._state)
                     {
                         _currCommands.Add(get2DPos(piecePos).Concat(
-                          _deadPawns[i].Item2).ToArray());
-                        _deadPawns[i] = new Tuple<bool, byte[]>(true, _deadPawns[i].Item2);
+                          _deadPawns[i]._position).ToArray());
+                        _deadPawns[i]._state = true;
+                        break;
                     }
                 }
             }

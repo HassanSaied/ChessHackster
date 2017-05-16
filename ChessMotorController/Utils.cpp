@@ -53,15 +53,12 @@ void loadState(byte& sourceRow, byte& sourceColumn, int* moves)
 
 void saveState(int row, int col, int* moves)
 {
-  row /= BLOCK_SIZE;
-  col /= BLOCK_SIZE;
-    
-  byte temp[] = { row, col, 
+  byte temp[] = { row/MAX_PER_BYTE, row%MAX_PER_BYTE, col/MAX_PER_BYTE, col%MAX_PER_BYTE,
                   moves[0]/MAX_PER_BYTE, moves[0]%MAX_PER_BYTE, moves[1]/MAX_PER_BYTE, moves[1]%MAX_PER_BYTE, 
                   moves[2]/MAX_PER_BYTE, moves[2]%MAX_PER_BYTE, moves[3]/MAX_PER_BYTE, moves[3]%MAX_PER_BYTE, 
                   moves[4]/MAX_PER_BYTE, moves[4]%MAX_PER_BYTE, moves[5]/MAX_PER_BYTE, moves[5]%MAX_PER_BYTE};
 
-  for(int i=0; i<14; ++i)
+  for(int i=0; i<16; ++i)
     {
       Serial.write(temp[i]);
       Serial.flush();

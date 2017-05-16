@@ -65,7 +65,7 @@ namespace ChessEngine.Speech
         }
 
         // Recognizer generated results
-        private void RecognizerResultGenerated(SpeechContinuousRecognitionSession session, SpeechContinuousRecognitionResultGeneratedEventArgs args)
+        private async void RecognizerResultGenerated(SpeechContinuousRecognitionSession session, SpeechContinuousRecognitionResultGeneratedEventArgs args)
         {
 
             // Check for different tags and initialize the variables
@@ -131,8 +131,9 @@ namespace ChessEngine.Speech
                       Convert.ToByte(8 - int.Parse(SourceRow)),
                       Convert.ToByte(DistinationColumn[0] - 'A'),
                       Convert.ToByte(8 - int.Parse(DistinationRow)));
+                    await controller.simulate(engine.LastMove);
                     engine.AiPonderMove(null);
-                    controller.simulate(engine.LastMove);
+                    await controller.simulate(engine.LastMove);
                     Debug.Write("Valid Move");
                 }
                 else

@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Text;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -38,39 +39,12 @@ namespace ChessMaster
         public MainPage()
         {
             this.InitializeComponent();
-            SerialManager.Initiate();
+            var controller = new Controller();
             engine = new Engine();
             engine.GameDifficulty = Engine.Difficulty.Easy;
             engine.NewGame();
-            var controller = new Controller();
-            controller.openFile();
             var reco = new SpeechRecognition(engine, controller);           
            }
-        public async System.Threading.Tasks.Task SpeakAsync()
-        {
-            try
-            {
-                await SerialManager.Initiate();
-                SerialManager.writer.WriteByte(200);
-                await SerialManager.writer.StoreAsync();
-
-                byte x;
-                SerialManager.reader.InputStreamOptions = Windows.Storage.Streams.InputStreamOptions.ReadAhead;
-                SerialManager.reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
-                await SerialManager.reader.LoadAsync(3);
-                if (SerialManager.reader.UnconsumedBufferLength > 0)
-                {
-                    x = SerialManager.reader.ReadByte();
-                    x = SerialManager.reader.ReadByte();
-                    x = SerialManager.reader.ReadByte();
-                }
-                    
-            }
-            catch(Exception e)
-            { 
-
-            }
-        }
-
+    
     }
 }

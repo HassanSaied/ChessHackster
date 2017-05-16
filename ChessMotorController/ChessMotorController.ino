@@ -194,10 +194,6 @@ void waitInput()
       }
 
     }
-    else
-    {
-      Serial.write(SIG_EOM);
-    }
   }
 
   parseInput(input[0], input[1], input[2], input[3], currentRow, currentColumn, moves, inProgress);
@@ -224,20 +220,28 @@ void setup() {
     currentColumn = 0;
 
     // Initiate
-    Serial.write(SIG_VALIDATE);
     response = 0;
-    while ( response != SIG_CONFIRM && response != SIG_CANCEL )
+    do
     {
-      Serial.flush(); // Wait to be sure signal is sent
       Serial.write(SIG_VALIDATE);
+      Serial.flush(); // Wait to be sure signal is sent
+      delay(10000);
+      
 
       if ( Serial.available() )
       {
         response = Serial.read();
          
       }
-    }
+    } while ( response != SIG_CONFIRM && response != SIG_CANCEL );
 
+    moves[0] = 0;
+    moves[1] = 0;
+    moves[2] = 0;
+    moves[3] = 0;
+    moves[4] = 0;
+    moves[5] = 0;
+    inProgress = false;
     // Response is either confirm then load, or cancel
     if( response == SIG_CONFIRM)
     {
@@ -279,23 +283,15 @@ void setup() {
 void loop()
 {
     digitalWrite(LED_BUILTIN,HIGH);
-    delay(1000);
     oneLoopMove();
-    magnetServo.write(0);
-    delay(1500);
 
     if (inProgress)
     {
         Serial.write(SIG_SAVE);
-        magnetServo.write(135);
-        delay(1500);
         // Save current state
         response = 0;
         while (response != SIG_CONFIRM && response != SIG_CANCEL)
         {
-            Serial.flush(); // Wait to be sure signal is sent
-            Serial.write(SIG_SAVE);
-
             if (Serial.available())
             {
                 response = Serial.read();
@@ -304,8 +300,10 @@ void loop()
 
         if (response == SIG_CANCEL)
         {
-            memset(moves, 0, sizeof(moves));
+          //TODO 
+            /*memset(moves, 0, sizeof(moves));
             inProgress = false;
+        */
         }
         else
         {
@@ -313,6 +311,8 @@ void loop()
             if (moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
             {
                 inProgress = false;
+                Serial.write(SIG_EOM);
+                
             }
         }
     }
@@ -322,3 +322,4 @@ void loop()
         waitInput();
     }
 }
+
