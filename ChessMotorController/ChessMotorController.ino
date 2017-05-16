@@ -200,6 +200,8 @@ void waitInput()
 }
 
 void setup() {
+  pinMode(LED_BUILTIN,OUTPUT);
+  digitalWrite(LED_BUILTIN,LOW);
     // Setting up the motors' configuration
     verticalMotor.setRPM(265);
     verticalMotor.setMicrostep(16);
@@ -228,6 +230,7 @@ void setup() {
       if ( Serial.available() )
       {
         response = Serial.read();
+         
       }
     }
 
@@ -254,6 +257,7 @@ void setup() {
        {
         if(Serial.read() == SIG_CANCEL)
         {
+         
 
           memset(moves, 0, sizeof(moves));
           return;
@@ -271,12 +275,16 @@ void setup() {
 void loop() {
 
   oneLoopMove();
-
-
+   digitalWrite(LED_BUILTIN,HIGH);
+   delay(1000);
+   //ana brz3 hna
+    inProgress = true;
   if(inProgress)
   {
-
+  //digitalWrite(LED_BUILTIN,LOW);
+  //delay(1000);
     Serial.write(SIG_SAVE);
+    magnetServo.write(135);
     // Save current state
     response = 0;
     while ( response != SIG_CONFIRM && response != SIG_CANCEL )
@@ -297,8 +305,6 @@ void loop() {
     }
   }
     saveState(currentRow, currentColumn, moves);
-
-  }
     if(moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
     {
       inProgress = false;

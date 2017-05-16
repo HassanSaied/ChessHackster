@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Storage.Streams;
 
 /// <summary>
 /// Class responsible for parsing the last state change in ChessEngine to
@@ -62,8 +63,6 @@ namespace ChessEngine.Controller
         public async Task openFile()
         {
             savedMoves = await storageFolder.CreateFileAsync("savedMoves.txt", Windows.Storage.CreationCollisionOption.ReplaceExisting);
-            byte[] tempArrFile = { 0, 1, 0, 100, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0 };
-            await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, tempArrFile);
 
         }
         /// <summary>
@@ -295,11 +294,12 @@ namespace ChessEngine.Controller
                 if (SerialManager.reader.UnconsumedBufferLength > 0)
                 {
                     response = SerialManager.reader.ReadByte();
-
+                    if (response < MAX_PER_BYTE) continue;
                     switch (response)
                     {
 
                         case SIG_VALIDATE:
+
                             var state = await Windows.Storage.FileIO.ReadBufferAsync(savedMoves);
                             if (state.Length>0)
                             {
@@ -315,29 +315,33 @@ namespace ChessEngine.Controller
                             await SerialManager.writer.StoreAsync();
                             do
                             {
+                                response = 0;
                                 await SerialManager.reader.LoadAsync(1);
-                                SerialManager.reader.ReadBuffer(SerialManager.reader.UnconsumedBufferLength);
-                            } while (SerialManager.reader.UnconsumedBufferLength > 0);
+                                response = SerialManager.reader.ReadByte();
+                            }
+                            while (response == SIG_VALIDATE);
                             Debug.Write("loop");
                             currentIndex = 0;
                             break;
 
                         case SIG_SAVE:
-                            await SerialManager.reader.LoadAsync(14);
+                            do
+                            {
+                                await SerialManager.reader.LoadAsync(14);
+                            } while (SerialManager.reader.UnconsumedBufferLength < 14);
                             byte[] stateToSave = new byte[14];
-                            SerialManager.reader.Read(stateToSave, 0, 14);
-                            // TODO: write to file
+                            SerialManager.reader.ReadBytes(stateToSave);
+                            await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
                             break;
 
                         case SIG_EOM:
-                            if(currentIndex <= _currCommands.Length)
+                            if(currentIndex <= _currCommands.Count)
                             {
                                SerialManager.writer.WriteByte(SIG_BOM);
                                await SerialManager.writer.StoreAsync();
                                SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
                                await SerialManager.writer.StoreAsync();
                             }
-
                             break;
                     }
                 }
@@ -355,6 +359,19 @@ namespace ChessEngine.Controller
                     }
                 }
             }
+        }
+
+        private static async Task clearBuffer()
+        {
+            do
+            {
+                await SerialManager.reader.LoadAsync(1000);
+                var buffer = SerialManager.reader.ReadBuffer(SerialManager.reader.UnconsumedBufferLength);
+                buffer.ToArray();
+            } while (SerialManager.reader.UnconsumedBufferLength > 0);
+            SerialManager.reader.DetachBuffer();
+            IBuffer clearingBuffer = new Windows.Storage.Streams.Buffer(UInt32.MaxValue-1);
+            await SerialManager.serialDevice.InputStream.ReadAsync(clearingBuffer,clearingBuffer.Capacity,InputStreamOptions.ReadAhead);
         }
 
         /// <summary>
