@@ -325,12 +325,25 @@ namespace ChessEngine.Controller
                             break;
 
                         case SIG_SAVE:
+                            SerialManager.writer.WriteByte(SIG_CONFIRM);
+                            await SerialManager.writer.StoreAsync();
                             do
                             {
-                                await SerialManager.reader.LoadAsync(14);
-                            } while (SerialManager.reader.UnconsumedBufferLength < 14);
+                                response = 0;
+                                await SerialManager.reader.LoadAsync(1);
+                                response = SerialManager.reader.ReadByte();
+                            }
+                            while (response == SIG_SAVE);
                             byte[] stateToSave = new byte[14];
-                            SerialManager.reader.ReadBytes(stateToSave);
+                            stateToSave[0] = response;
+                            do
+                            {
+                                await SerialManager.reader.LoadAsync(13);
+                            } while (SerialManager.reader.UnconsumedBufferLength < 13);
+                            for (int i = 0; i < 13; i++)
+                            {
+                                stateToSave[i + 1] = SerialManager.reader.ReadByte();
+                            }
                             await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
                             break;
 

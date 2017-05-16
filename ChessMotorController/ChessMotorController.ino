@@ -276,15 +276,9 @@ void loop() {
 
   oneLoopMove();
    digitalWrite(LED_BUILTIN,HIGH);
-   delay(1000);
-   //ana brz3 hna
-    inProgress = true;
   if(inProgress)
   {
-  //digitalWrite(LED_BUILTIN,LOW);
-  //delay(1000);
     Serial.write(SIG_SAVE);
-    magnetServo.write(135);
     // Save current state
     response = 0;
     while ( response != SIG_CONFIRM && response != SIG_CANCEL )
@@ -303,8 +297,13 @@ void loop() {
         memset( moves, 0, sizeof(moves));
         inProgress = false;
     }
+    else
+    {
+      saveState(currentRow, currentColumn, moves);
+    }
+        
   }
-    saveState(currentRow, currentColumn, moves);
+
     if(moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
     {
       inProgress = false;
