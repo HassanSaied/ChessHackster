@@ -13,6 +13,7 @@ int currentColumn;
 
 // To source: Horizontal, Vertical; To Destination: Horizontal, Vertical, Horizontal, Vertical
 int moves[6];
+int currentMoves[4];
 
 // Last saved state indicators
 byte lastStateSourceRow, lastStateSourceColumn;
@@ -197,6 +198,10 @@ void waitInput()
   }
 
   parseInput(input[0], input[1], input[2], input[3], currentRow, currentColumn, moves, inProgress);
+  currentMoves[0] = moves[2];
+  currentMoves[1] = moves[3];
+  currentMoves[2] = moves[4];
+  currentMoves[3] = moves[5];
 }
 
 void setup() {
@@ -300,10 +305,22 @@ void loop()
 
         if (response == SIG_CANCEL)
         {
-          //TODO 
-            /*memset(moves, 0, sizeof(moves));
-            inProgress = false;
-        */
+            if (moves[0] != 0 || moves[1] != 0)
+            {
+              moves[0] = 0;
+              moves[1] = 0;
+              moves[2] = 0;
+              moves[3] = 0;
+              moves[4] = 0;
+              moves[5] = 0;
+            }
+            else
+            {
+              moves[5] = moves[2] - currentMoves[0];
+              moves[4] = moves[3] - currentMoves[1];
+              moves[3] = moves[4] - currentMoves[2];
+              moves[2] = moves[5] - currentMoves[3];
+            }
         }
         else
         {

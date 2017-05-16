@@ -28,13 +28,13 @@
     <AppXManifest Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-05-16T20:07:06.230</Modified>
+      <Modified>2017-05-16T21:18:32.936</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\ChessMaster.exe">
       <PackagePath>entrypoint\ChessMaster.exe</PackagePath>
-      <Modified>2017-05-16T20:07:05.016</Modified>
+      <Modified>2017-05-16T21:18:30.735</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\hsaie\.nuget\packages\Microsoft.CSharp\4.0.1\lib\netcore50\Microsoft.CSharp.dll">
       <PackagePath>Microsoft.CSharp.dll</PackagePath>
@@ -494,7 +494,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\x64\Debug\ChessEngine.dll">
       <PackagePath>ChessEngine.dll</PackagePath>
-      <Modified>2017-05-16T20:06:59.698</Modified>
+      <Modified>2017-05-16T21:18:26.490</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\grammar.xml">
       <PackagePath>grammar.xml</PackagePath>
@@ -549,11 +549,11 @@
     <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-05-16T13:53:30.620</Modified>
+      <Modified>2017-05-16T21:18:32.587</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\Core\ChessMaster.exe">
       <PackagePath>ChessMaster.exe</PackagePath>
-      <Modified>2017-05-16T20:07:06.218</Modified>
+      <Modified>2017-05-16T21:18:32.918</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

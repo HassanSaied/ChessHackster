@@ -19,7 +19,7 @@ namespace ChessEngine.Controller
 {
     public class Controller
     {
-
+        private enum Cancel  {ENABLED, DISABLED, PENDING};
         // Custom Pair
         private class Pair
         {
@@ -62,10 +62,11 @@ namespace ChessEngine.Controller
 
         // Shared object and related
         private System.Object _lock = new System.Object();
-        private bool _cancel = false;
+        private Cancel _cancel = Cancel.ENABLED;
         public void setCancel()
         {
-            _cancel = true;
+            if (_cancel == Cancel.ENABLED)
+                _cancel = Cancel.PENDING;
         }
         private bool _inProgress = false;
         public bool inProgress
@@ -283,6 +284,7 @@ namespace ChessEngine.Controller
                     return;
                 }
 
+                _cancel = Cancel.ENABLED;
                 bool EOM = false;
                 while (!EOM)
                 {
@@ -295,16 +297,25 @@ namespace ChessEngine.Controller
                     {
 
                         case SIG_SAVE:
-                            SerialManager.writer.WriteByte(SIG_CONFIRM);
-                            await SerialManager.writer.StoreAsync();
-                            do
+                            if (_cancel == Cancel.PENDING)
                             {
-                                await SerialManager.reader.LoadAsync(16);
-                            } while (SerialManager.reader.UnconsumedBufferLength < 16);
+                                SerialManager.writer.WriteByte(SIG_CANCEL);
+                                await SerialManager.writer.StoreAsync();
+                                _cancel = Cancel.DISABLED;
+                            }
+                            else
+                            {
+                                SerialManager.writer.WriteByte(SIG_CONFIRM);
+                                await SerialManager.writer.StoreAsync();
+                                do
+                                {
+                                    await SerialManager.reader.LoadAsync(16);
+                                } while (SerialManager.reader.UnconsumedBufferLength < 16);
 
-                            byte[] stateToSave = new byte[16];
-                            SerialManager.reader.ReadBytes(stateToSave);
-                            await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
+                                byte[] stateToSave = new byte[16];
+                                SerialManager.reader.ReadBytes(stateToSave);
+                                await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
+                            }
                             break;
                         case SIG_VALIDATE:
                             throw new Exception("Error : Slave resetted");
@@ -313,8 +324,6 @@ namespace ChessEngine.Controller
                             break;
                         default:
                             throw new Exception(response.ToString());
-                            //var x = SerialManager.serialDevice.InputStream.AsStreamForRead();
-
                     }
                 }
             }
