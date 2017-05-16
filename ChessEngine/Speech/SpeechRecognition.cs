@@ -138,7 +138,6 @@ namespace ChessEngine.Speech
                 else
                 {
                     Debug.WriteLine("InValid Move");
-                    controller.simulate(engine.LastMove);
                 }
             }    
         }

@@ -204,9 +204,9 @@ namespace ChessEngine.Controller
 
         public async Task simulate(Engine.MoveContent lastMove)
         {
-           /* _currMove = lastMove;
+            _currMove = lastMove;
             determineMovementType();
-            generateCommands();*/
+            generateCommands();
             await serialCommunicate();
         }
 
@@ -313,13 +313,20 @@ namespace ChessEngine.Controller
                                 SerialManager.writer.WriteByte(SIG_CANCEL);
                             }
                             await SerialManager.writer.StoreAsync();
-                            do
+                            try
                             {
-                                response = 0;
-                                await SerialManager.reader.LoadAsync(1);
-                                response = SerialManager.reader.ReadByte();
+                                do
+                                {
+                                    response = 0;
+                                    await SerialManager.reader.LoadAsync(1);
+                                    response = SerialManager.reader.ReadByte();
+                                }
+                                while (response == SIG_VALIDATE);
                             }
-                            while (response == SIG_VALIDATE);
+                            catch (Exception e)
+                            {
+
+                            }
                             Debug.Write("loop");
                             currentIndex = 0;
                             break;
@@ -354,6 +361,17 @@ namespace ChessEngine.Controller
                                await SerialManager.writer.StoreAsync();
                                SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
                                await SerialManager.writer.StoreAsync();
+                                do
+                                {
+                                    response = 0;
+                                    await SerialManager.reader.LoadAsync(1);
+                                    response = SerialManager.reader.ReadByte();
+                                }
+                                while (response == SIG_EOM);
+                            }
+                            else
+                            {
+                                return;
                             }
                             break;
                     }

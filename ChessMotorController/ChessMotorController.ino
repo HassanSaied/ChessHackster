@@ -194,6 +194,10 @@ void waitInput()
       }
 
     }
+    else
+    {
+      Serial.write(SIG_EOM);
+    }
   }
 
   parseInput(input[0], input[1], input[2], input[3], currentRow, currentColumn, moves, inProgress);
@@ -272,46 +276,52 @@ void setup() {
 
 }
 
-void loop() {
+void loop()
+{
+      digitalWrite(LED_BUILTIN,HIGH);
+      delay(1000);
+    oneLoopMove();
 
-  oneLoopMove();
-   digitalWrite(LED_BUILTIN,HIGH);
-  if(inProgress)
-  {
-    Serial.write(SIG_SAVE);
-    // Save current state
-    response = 0;
-    while ( response != SIG_CONFIRM && response != SIG_CANCEL )
+    if (inProgress)
     {
-      Serial.flush(); // Wait to be sure signal is sent
-      Serial.write(SIG_SAVE);
+        //digitalWrite(LED_BUILTIN,LOW);
+        //delay(1000);
+        Serial.write(SIG_SAVE);
+        magnetServo.write(135);
+        // Save current state
+        response = 0;
+        while (response != SIG_CONFIRM && response != SIG_CANCEL)
+        {
+            Serial.flush(); // Wait to be sure signal is sent
+            Serial.write(SIG_SAVE);
 
-      if ( Serial.available() )
-      {
-        response = Serial.read();
-      }
-    }
+            if (Serial.available())
+            {
+                response = Serial.read();
+            }
+        }
 
-    if( response == SIG_CANCEL)
-    {
-        memset( moves, 0, sizeof(moves));
-        inProgress = false;
+        if (response == SIG_CANCEL)
+        {
+            memset(moves, 0, sizeof(moves));
+            inProgress = false;
+        }
+        else
+        {
+            saveState(currentRow, currentColumn, moves);
+            if (moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
+            {
+                inProgress = false;
+            }
+        }
     }
+    // Checking for new order
     else
     {
-      saveState(currentRow, currentColumn, moves);
+        digitalWrite(LED_BUILTIN,LOW);
+        delay(1000);
+        waitInput();
+        digitalWrite(LED_BUILTIN,HIGH);
+        delay(1000);
     }
-        
-  }
-
-    if(moves[0] == 0 && moves[1] == 0 && moves[2] == 0 && moves[3] == 0 && moves[4] == 0 && moves[5] == 0)
-    {
-      inProgress = false;
-    }
-
-  // Checking for new order
-  else
-  {
-    waitInput();
-  }
 }
