@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage.Streams;
+using System.Threading;
 
 /// <summary>
 /// Class responsible for parsing the last state change in ChessEngine to
@@ -317,10 +318,17 @@ namespace ChessEngine.Controller
                             {
                                 do
                                 {
+
+
+
+                                    CancellationToken token = new CancellationToken();
+                                    token.
                                     response = 0;
-                                    await SerialManager.reader.LoadAsync(1);
-                                    response = SerialManager.reader.ReadByte();
+                                    await SerialManager.reader.LoadAsync(1).AsTask(token);
+                                    if (SerialManager.reader.UnconsumedBufferLength > 0)
+                                        response = SerialManager.reader.ReadByte();
                                 }
+
                                 while (response == SIG_VALIDATE);
                             }
                             catch (Exception e)
@@ -332,46 +340,54 @@ namespace ChessEngine.Controller
                             break;
 
                         case SIG_SAVE:
-                            SerialManager.writer.WriteByte(SIG_CONFIRM);
-                            await SerialManager.writer.StoreAsync();
-                            do
+                            try
                             {
-                                response = 0;
-                                await SerialManager.reader.LoadAsync(1);
-                                response = SerialManager.reader.ReadByte();
-                            }
-                            while (response == SIG_SAVE);
-                            byte[] stateToSave = new byte[14];
-                            stateToSave[0] = response;
-                            do
-                            {
-                                await SerialManager.reader.LoadAsync(13);
-                            } while (SerialManager.reader.UnconsumedBufferLength < 13);
-                            for (int i = 0; i < 13; i++)
-                            {
-                                stateToSave[i + 1] = SerialManager.reader.ReadByte();
-                            }
-                            await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
-                            break;
-
-                        case SIG_EOM:
-                            if(currentIndex <= _currCommands.Count)
-                            {
-                               SerialManager.writer.WriteByte(SIG_BOM);
-                               await SerialManager.writer.StoreAsync();
-                               SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
-                               await SerialManager.writer.StoreAsync();
+                                SerialManager.writer.WriteByte(SIG_CONFIRM);
+                                await SerialManager.writer.StoreAsync();
                                 do
                                 {
                                     response = 0;
                                     await SerialManager.reader.LoadAsync(1);
-                                    response = SerialManager.reader.ReadByte();
+                                    if (SerialManager.reader.UnconsumedBufferLength > 0)
+                                        response = SerialManager.reader.ReadByte();
                                 }
-                                while (response == SIG_EOM);
+                                while (response == SIG_SAVE);
+                                byte[] stateToSave = new byte[14];
+                                stateToSave[0] = response;
+                                do
+                                {
+                                    await SerialManager.reader.LoadAsync(13);
+                                } while (SerialManager.reader.UnconsumedBufferLength < 13);
+                                for (int i = 0; i < 13; i++)
+                                {
+                                    stateToSave[i + 1] = SerialManager.reader.ReadByte();
+                                }
+                                await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
                             }
-                            else
+                            catch (Exception e)
                             {
-                                return;
+
+                            }
+                            break;
+
+                        case SIG_EOM:
+                            try
+                            {
+                                if (currentIndex < _currCommands.Count)
+                                {
+                                    SerialManager.writer.WriteByte(SIG_BOM);
+                                    await SerialManager.writer.StoreAsync();
+                                    SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
+                                    await SerialManager.writer.StoreAsync();
+                                }
+                                else
+                                {
+                                    return;
+                                }
+                            }
+                            catch(Exception e)
+                            {
+
                             }
                             break;
                     }

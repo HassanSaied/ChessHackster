@@ -278,16 +278,17 @@ void setup() {
 
 void loop()
 {
-      digitalWrite(LED_BUILTIN,HIGH);
-      delay(1000);
+    digitalWrite(LED_BUILTIN,HIGH);
+    delay(1000);
     oneLoopMove();
+    magnetServo.write(0);
+    delay(1500);
 
     if (inProgress)
     {
-        //digitalWrite(LED_BUILTIN,LOW);
-        //delay(1000);
         Serial.write(SIG_SAVE);
         magnetServo.write(135);
+        delay(1500);
         // Save current state
         response = 0;
         while (response != SIG_CONFIRM && response != SIG_CANCEL)
@@ -318,10 +319,6 @@ void loop()
     // Checking for new order
     else
     {
-        digitalWrite(LED_BUILTIN,LOW);
-        delay(1000);
         waitInput();
-        digitalWrite(LED_BUILTIN,HIGH);
-        delay(1000);
     }
 }
