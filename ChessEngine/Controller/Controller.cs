@@ -57,8 +57,7 @@ namespace ChessEngine.Controller
         private const byte SIG_CANCEL   = 255;
 
         // For saving moves
-        Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-        Windows.Storage.StorageFile savedMoves;
+        byte[] storedBytes;
 
         // Shared object and related
         private System.Object _lock = new System.Object();
@@ -81,6 +80,8 @@ namespace ChessEngine.Controller
         {
             // Busy till validate
             _inProgress = true;
+
+            storedBytes = new byte[24];
 
             // Start communication
             initiateCommunication();
@@ -155,13 +156,14 @@ namespace ChessEngine.Controller
         /// </remarks>
         /// <param name="lastMove"> Last Chess Engine state </param>
 
-        public async Task simulate(Engine.MoveContent lastMove)
+        public async Task<bool> simulate(Engine.MoveContent lastMove)
         {
             _currMove = lastMove;
             determineMovementType();
             generateCommands();
-            await serialCommunicate();
+            await executeCommands();
             // TODO: play soundtracks
+            return _cancel == Cancel.DISABLED;
         }
 
         /// <summary>
@@ -234,8 +236,6 @@ namespace ChessEngine.Controller
 
         private async Task initiateCommunication()
         {
-            // Open file
-            savedMoves = await storageFolder.CreateFileAsync("savedMoves.txt", Windows.Storage.CreationCollisionOption.ReplaceExisting);
             await SerialManager.Initiate();
 
             do
@@ -245,7 +245,6 @@ namespace ChessEngine.Controller
 
             if (Controller.SIG_VALIDATE != SerialManager.reader.ReadByte())
                 throw new Exception("Fatal Error: master was disconnected and slave was not");
-
 
             SerialManager.writer.WriteByte(SIG_CANCEL);
             await SerialManager.writer.StoreAsync();
@@ -259,31 +258,103 @@ namespace ChessEngine.Controller
             
         }
 
+        private async Task handleControllerReset()
+        {
+            SerialManager.writer.WriteByte(SIG_CONFIRM);
+            await SerialManager.writer.StoreAsync();
+            SerialManager.writer.WriteBytes(storedBytes);
+            await SerialManager.writer.StoreAsync();
+            Debug.Write("Sending: ");
+            foreach (var tmp in storedBytes)
+            {
+                Debug.Write(tmp.ToString() + " ");
+            }
+            Debug.WriteLine("");
+        }
+
+        private async Task executeCommands()
+        {
+            _inProgress = true;
+            for (int currentIndex = 0; currentIndex < _currCommands.Count; ++currentIndex)
+            {
+                SerialManager.writer.WriteByte(SIG_BOM);
+                await SerialManager.writer.StoreAsync();
+                SerialManager.writer.WriteBytes(_currCommands[currentIndex]);
+                await SerialManager.writer.StoreAsync();
+                try
+                {
+                    await serialCommunicate(currentIndex);
+                }
+                catch (NotSupportedException ex)
+                {
+                    if (!ex.Message.Contains("Error: Arduino resetted"))
+                        throw new Exception("Should not happen!");
+                    await handleControllerReset();
+                }
+            }
+            _inProgress = false;
+        }
+
+        private async Task receiveState()
+        {
+            do
+            {
+                await SerialManager.reader.LoadAsync(24);
+            } while (SerialManager.reader.UnconsumedBufferLength < 24);
+            byte[] tempBytes = new byte[24];
+            SerialManager.reader.ReadBytes(tempBytes);
+            foreach (byte b in tempBytes)
+            {
+                if (b > MAX_PER_BYTE)
+                    throw new NotSupportedException("Error: Arduino resetted");
+            }
+            storedBytes = tempBytes;
+            foreach (var tmp in storedBytes)
+            {
+                Debug.Write(tmp.ToString() + " ");
+            }
+            Debug.WriteLine("");
+        }
+
+        private async Task checkForCancel(int currentIndex)
+        {
+            if (_cancel == Cancel.PENDING)
+            {
+                SerialManager.writer.WriteByte(SIG_CANCEL);
+                await SerialManager.writer.StoreAsync();
+                _cancel = Cancel.DISABLED;
+                revertCommands(currentIndex); 
+            }
+            else
+            {
+                SerialManager.writer.WriteByte(SIG_CONFIRM);
+                await SerialManager.writer.StoreAsync();
+            }
+        }
+        
+        private void revertCommands(int currentIndex)
+        {
+            List<Byte[]> revertedCommands = new List<byte[]>();
+
+            for (int i = currentIndex - 1; i >= 0; --i)
+            {
+                byte[] command = _currCommands[i];
+                byte[] revertedCommand = new byte[4];
+                revertedCommand[0] = command[2];
+                revertedCommand[1] = command[3];
+                revertedCommand[2] = command[0];
+                revertedCommand[3] = command[1];
+                revertedCommands.Add(revertedCommand);
+            }
+
+            _currCommands = revertedCommands;
+        }
+
         /// <summary>
         /// Communicate between Chess engine and motor controller thorugh serial communication
         /// </summary>
-        private async Task serialCommunicate()
+        private async Task serialCommunicate(int currentIndex)
         {
-            _inProgress = true;
-            int currentIndex = 0;
-
-            while (_inProgress)
-            {
-
-                if (currentIndex < _currCommands.Count)
-                {
-                    SerialManager.writer.WriteByte(SIG_BOM);
-                    await SerialManager.writer.StoreAsync();
-                    SerialManager.writer.WriteBytes(_currCommands[currentIndex++]);
-                    await SerialManager.writer.StoreAsync();
-                }
-
-                else
-                {
-                    _inProgress = false;
-                    return;
-                }
-
                 _cancel = Cancel.ENABLED;
                 bool EOM = false;
                 while (!EOM)
@@ -295,30 +366,12 @@ namespace ChessEngine.Controller
                     byte response = SerialManager.reader.ReadByte();
                     switch (response)
                     {
-
                         case SIG_SAVE:
-                            if (_cancel == Cancel.PENDING)
-                            {
-                                SerialManager.writer.WriteByte(SIG_CANCEL);
-                                await SerialManager.writer.StoreAsync();
-                                _cancel = Cancel.DISABLED;
-                            }
-                            else
-                            {
-                                SerialManager.writer.WriteByte(SIG_CONFIRM);
-                                await SerialManager.writer.StoreAsync();
-                                do
-                                {
-                                    await SerialManager.reader.LoadAsync(16);
-                                } while (SerialManager.reader.UnconsumedBufferLength < 16);
-
-                                byte[] stateToSave = new byte[16];
-                                SerialManager.reader.ReadBytes(stateToSave);
-                                await Windows.Storage.FileIO.WriteBytesAsync(savedMoves, stateToSave);
-                            }
+                            await receiveState();
+                            await checkForCancel(currentIndex);
                             break;
                         case SIG_VALIDATE:
-                            throw new Exception("Error : Slave resetted");
+                            throw new NotSupportedException("Error: Arduino resetted");
                         case SIG_EOM:
                             EOM = true;
                             break;
@@ -326,7 +379,6 @@ namespace ChessEngine.Controller
                             throw new Exception(response.ToString());
                     }
                 }
-            }
         }
 
         /// <summary>

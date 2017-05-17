@@ -15,13 +15,14 @@
 #define SIG_CANCEL   255
 
 // Simple parser from byte array given by master
-void parseInput(byte, byte, byte, byte, int&, int&, int*, bool&);
+void parseInput(byte sourceRow, byte sourceColumn, byte destinationRow, byte destinationColumn,
+                int &currentRow, int &currentColumn, int moves[6], bool &inProgress);
 
 // Save current state
-void saveState(int, int, int*);
+void saveState(int row, int column, int moves[6]);
 
 // Load a previously saved state (source and moves) and calculate (destination)
-void loadState(byte&, byte&, int*);
+void loadState(int moves[6]);
 
 
 

@@ -21962,10 +21962,10 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj",
+      "projectUniqueName": "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessEngine\\ChessEngine.csproj",
       "projectName": "ChessEngine",
-      "projectPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj",
-      "projectJsonPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\project.json",
+      "projectPath": "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessEngine\\ChessEngine.csproj",
+      "projectJsonPath": "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessEngine\\project.json",
       "projectStyle": "ProjectJson"
     },
     "dependencies": {

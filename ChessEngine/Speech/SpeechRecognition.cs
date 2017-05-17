@@ -71,17 +71,7 @@ namespace ChessEngine.Speech
             // Check for different tags and initialize the variables
             String Command = GetTag("Command", args);
 
-            lock (_lock)
-            {
-                if (controller.inProgress)
-                {
-                    if (Command == "Cancel")
-                    {
-                        controller.setCancel();
-                    }
-                    return;
-                }
-            }
+            
             
 
             // Output debug strings
@@ -93,7 +83,18 @@ namespace ChessEngine.Speech
             Debug.WriteLine("Count: " + count);
             Debug.WriteLine("Tag: " + args.Result.Constraint.Tag);
 
-            
+            lock (_lock)
+            {
+                if (controller.inProgress)
+                {
+                    if (Command == "Cancel")
+                    {
+                        controller.setCancel();
+                    }
+                    return;
+                }
+            }
+
             if (Command == "NewGame")
             {
                 engine.NewGame();
@@ -131,7 +132,12 @@ namespace ChessEngine.Speech
                       Convert.ToByte(8 - int.Parse(SourceRow)),
                       Convert.ToByte(DistinationColumn[0] - 'A'),
                       Convert.ToByte(8 - int.Parse(DistinationRow)));
-                    await controller.simulate(engine.LastMove);
+                    if (await controller.simulate(engine.LastMove))
+                    {
+                        engine.Undo();
+                        return;
+                    }
+
                     engine.AiPonderMove(null);
                     await controller.simulate(engine.LastMove);
                     Debug.Write("Valid Move");

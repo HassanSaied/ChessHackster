@@ -22016,16 +22016,16 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessMaster\\ChessMaster.csproj",
+      "projectUniqueName": "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessMaster\\ChessMaster.csproj",
       "projectName": "ChessMaster",
-      "projectPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessMaster\\ChessMaster.csproj",
-      "projectJsonPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessMaster\\project.json",
+      "projectPath": "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessMaster\\ChessMaster.csproj",
+      "projectJsonPath": "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessMaster\\project.json",
       "projectStyle": "ProjectJson",
       "frameworks": {
         "uap10.0": {
           "projectReferences": {
-            "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj": {
-              "projectPath": "C:\\Users\\hsaie\\Desktop\\Micro\\ChessEngine-master\\ChessEngine-master\\ChessEngine\\ChessEngine.csproj"
+            "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessEngine\\ChessEngine.csproj": {
+              "projectPath": "C:\\Users\\hsaie\\Desktop\\ChessHackster\\ChessEngine\\ChessEngine.csproj"
             }
           }
         }

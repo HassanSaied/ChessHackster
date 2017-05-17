@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Machine>DESKTOP-02O8I43</Machine>
+    <Machine>DESKTOP-KAUDIHA</Machine>
     <WindowsUser>hsaie</WindowsUser>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetOsVersion>10.0</TargetOsVersion>
@@ -10,13 +10,16 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>f691b103-cc90-4793-a526-3e7beb08e553</PackageIdentityName>
     <PackageIdentityPublisher>CN=Ahmad Elsayed</PackageIdentityPublisher>
-    <IntermediateOutputPath>C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\obj\x64\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\obj\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType>
     </RemoteDeploymentType>
     <PackageRegistrationPath>
     </PackageRegistrationPath>
     <RemoveNonLayoutFiles>true</RemoveNonLayoutFiles>
-    <RegisteredManifestChecksum>3AEE93E1BCC03F15E3B4331046FE3C688C63D931F6646EBA586F80A7698D566A</RegisteredManifestChecksum>
+    <DeployOptionalPackages>false</DeployOptionalPackages>
+    <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
+    <LayoutDir>C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\bin\x64\Debug\AppX</LayoutDir>
+    <RegisteredManifestChecksum>00F2C797EB4BD4A3FF1E39C74E11AC06BCBBD16D2C791DFFD3831AE64766E620</RegisteredManifestChecksum>
     <RegisteredPackageMoniker>f691b103-cc90-4793-a526-3e7beb08e553_1.0.0.0_x64__fxmx50jcda18t</RegisteredPackageMoniker>
     <RegisteredUserModeAppID>f691b103-cc90-4793-a526-3e7beb08e553_fxmx50jcda18t!App</RegisteredUserModeAppID>
     <RegisteredPackageID>f691b103-cc90-4793-a526-3e7beb08e553</RegisteredPackageID>
@@ -25,16 +28,16 @@
     <JitOptimizationSuppressed>True</JitOptimizationSuppressed>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\Core\AppxManifest.xml">
+    <AppXManifest Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\bin\x64\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-05-16T21:18:32.936</Modified>
+      <Modified>2017-05-17T14:38:26.217</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\ChessMaster.exe">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\bin\x64\Debug\ChessMaster.exe">
       <PackagePath>entrypoint\ChessMaster.exe</PackagePath>
-      <Modified>2017-05-16T21:18:30.735</Modified>
+      <Modified>2017-05-17T14:38:25.464</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\hsaie\.nuget\packages\Microsoft.CSharp\4.0.1\lib\netcore50\Microsoft.CSharp.dll">
       <PackagePath>Microsoft.CSharp.dll</PackagePath>
@@ -492,121 +495,121 @@
       <PackagePath>System.Xml.XmlSerializer.dll</PackagePath>
       <Modified>2016-06-11T21:15:04.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessEngine\bin\x64\Debug\ChessEngine.dll">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessEngine\bin\x64\Debug\ChessEngine.dll">
       <PackagePath>ChessEngine.dll</PackagePath>
-      <Modified>2017-05-16T21:18:26.490</Modified>
+      <Modified>2017-05-17T14:38:22.375</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\grammar.xml">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\grammar.xml">
       <PackagePath>grammar.xml</PackagePath>
-      <Modified>2017-05-15T16:44:16.697</Modified>
+      <Modified>2017-05-17T09:22:37.579</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Properties\Default.rd.xml">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Properties\Default.rd.xml">
       <PackagePath>Properties\Default.rd.xml</PackagePath>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.805</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.700</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.700</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.700</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.705</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.705</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.705</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-03-20T21:57:32.000</Modified>
+      <Modified>2017-05-16T12:59:01.705</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\ChessMaster.xr.xml">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\bin\x64\Debug\ChessMaster.xr.xml">
       <PackagePath>ChessMaster.xr.xml</PackagePath>
-      <Modified>2017-05-15T13:35:43.655</Modified>
+      <Modified>2017-05-16T13:00:15.244</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Windows Kits\10\UnionMetadata\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
-      <Modified>2017-03-10T16:16:53.777</Modified>
+      <Modified>2017-05-16T13:17:16.756</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\resources.pri">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\bin\x64\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2017-05-16T21:18:32.587</Modified>
+      <Modified>2017-05-17T09:24:00.977</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\Micro\ChessEngine-master\ChessEngine-master\ChessMaster\bin\x64\Debug\Core\ChessMaster.exe">
+    <AppxPackagedFile Include="C:\Users\hsaie\Desktop\ChessHackster\ChessMaster\bin\x64\Debug\Core\ChessMaster.exe">
       <PackagePath>ChessMaster.exe</PackagePath>
-      <Modified>2017-05-16T21:18:32.918</Modified>
+      <Modified>2017-05-17T14:38:26.209</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>
     <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.NET.CoreRuntime\1.1\">
       <Name>Microsoft.NET.CoreRuntime.1.1</Name>
-      <Version>1.1.24920.0</Version>
+      <Version>1.1.25129.1</Version>
       <Architecture>ARM</Architecture>
-      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.1.1, MinVersion = 1.1.24920.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.1.1, MinVersion = 1.1.25129.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
       <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.NET.CoreRuntime\1.1\.\AppX\ARM\Microsoft.NET.CoreRuntime.1.1.appx</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
     <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.NET.CoreRuntime\1.1\">
       <Name>Microsoft.NET.CoreRuntime.1.1</Name>
-      <Version>1.1.24920.0</Version>
+      <Version>1.1.25129.1</Version>
       <Architecture>x64</Architecture>
-      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.1.1, MinVersion = 1.1.24920.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.1.1, MinVersion = 1.1.25129.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
       <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.NET.CoreRuntime\1.1\.\AppX\x64\Microsoft.NET.CoreRuntime.1.1.appx</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
     <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.NET.CoreRuntime\1.1\">
       <Name>Microsoft.NET.CoreRuntime.1.1</Name>
-      <Version>1.1.24920.0</Version>
+      <Version>1.1.25129.1</Version>
       <Architecture>x86</Architecture>
-      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.1.1, MinVersion = 1.1.24920.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <FrameworkIdentity>Name = Microsoft.NET.CoreRuntime.1.1, MinVersion = 1.1.25129.1, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
       <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.NET.CoreRuntime\1.1\.\AppX\x86\Microsoft.NET.CoreRuntime.1.1.appx</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
     <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
       <Name>Microsoft.VCLibs.140.00.Debug</Name>
-      <Version>14.0.25017.0</Version>
+      <Version>14.0.25019.0</Version>
       <Architecture>ARM</Architecture>
-      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.25017.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.25019.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
       <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Debug\ARM\Microsoft.VCLibs.ARM.Debug.14.00.appx</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
     <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
       <Name>Microsoft.VCLibs.140.00.Debug</Name>
-      <Version>14.0.25017.0</Version>
+      <Version>14.0.25019.0</Version>
       <Architecture>x64</Architecture>
-      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.25017.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.25019.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
       <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Debug\x64\Microsoft.VCLibs.x64.Debug.14.00.appx</AppxLocation>
       <MoreInfo>
       </MoreInfo>
     </ResolvedSDKReference>
     <ResolvedSDKReference Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\">
       <Name>Microsoft.VCLibs.140.00.Debug</Name>
-      <Version>14.0.25017.0</Version>
+      <Version>14.0.25019.0</Version>
       <Architecture>x86</Architecture>
-      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.25017.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
+      <FrameworkIdentity>Name = Microsoft.VCLibs.140.00.Debug, MinVersion = 14.0.25019.0, Publisher = %27CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US%27</FrameworkIdentity>
       <AppxLocation>C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.VCLibs\14.0\.\AppX\Debug\x86\Microsoft.VCLibs.x86.Debug.14.00.appx</AppxLocation>
       <MoreInfo>
       </MoreInfo>
